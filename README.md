@@ -13,4 +13,12 @@
     * Convention
     * Virtualenv *
   * venv/exercises.py
+
+## Tuần 2 
+ * Tìm hiểu về Git 
+    * Config
+    * Create Branch
+    * Merge
+    * Commit
+    * Push
     
