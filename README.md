@@ -17,8 +17,13 @@
 ## Tuần 2 
  * Tìm hiểu về Git 
     * Config
-    * Create Branch
-    * Merge
     * Commit
-    * Push
+    * Log,Restore
+    * Create Branch
+    * Checkout
+    * Merge,Rebase
+    * Fetch,Pull,Push
+    * Reset,Revert
+    * Conflict
+ * Reports/Week2_Git.md
     
