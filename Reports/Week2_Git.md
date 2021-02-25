@@ -57,8 +57,7 @@
 ***
 **Gộp nhánh**
 * git merge:gộp nhánh ,trước khi gộp lên kiểm tra trạng thái để tránh xung đột (status),
-* git merge namebranch: gộp nhánh namebranch vào nhánh đang đứng,lịch sử commit nhánh namebranch được thêm vào sau lịch sử nhánh master (trường hợp nhánh master không thực hiện commit nào )
-  * Trường hợp nhánh master không thực hiện commit nào:gộp nhánh namebranch vào nhánh đang đứng,lịch sử commit nhánh namebranch được thêm vào sau lịch sử nhánh master
+* git merge namebranch: gộp nhánh namebranch vào nhánh đang đứng,lịch sử commit nhánh namebranch được thêm vào sau lịch sử nhánh đang đứng (Không xung đột )
   * Trường hợp có xung đột(cùng sửa một nhánh,pull về trước để xử lý->push)
     * git merge --abort:không merge nữa
     * Vẫn muốn gộp ,mở file xung đột ra và chọn( or mergetool -> :+diffg:LO-nhánh đang đứng,RE-nhánh được gộp,BA-không lấy nhánh nào,lấy nd gốc trước khi sửa đổi của cả hai nhánh-wq),file xung đột vẫn lưu một file của cả hai,
@@ -75,7 +74,7 @@
 * git fetch (+origin:tên remote):tải về không tin từ remote,chưa áp dụng vào local,nhưng có thể lấy thông tin từ nó
 * git log -p -n:xem thay đổi giữa các commit
 * git diff commit commit xem sự thay đổi giữa commit trên local và remote
-* git checkout namebranch:tải về nhánh trên remote(không tải tất cả nhánh)
+* git checkout namebranch:tải về nhánh trên remote(không tải tất cả nhánh,fetch trước đó rồi )
 * git remote -v:kiểm tra kho chứa,tên remote
 * git push origin master :đẩy dữ liệu lên remote * đẩy nhánh lên remote(nếu remote chưa tồn tại nhánh đó)
   * origin :tên remote
@@ -100,11 +99,11 @@
 ***
  **Khác nhau giữa merge và rebase** 
  * git merge:lịch sử commit được sắp xếp theo thời gian
- * git rebase:lịch sử commit :commit chung+commit được gộp từ khi rẽ nhánh+commit của nhánh đang đứng từ khi rẽ nhánh
+ * git rebase:lịch sử commit :commit chung+commit của commit được gộp từ khi rẽ nhánh+commit của nhánh đang đứng từ khi rẽ nhánh
  **Khác nhau giữa reset và revert**
 * reset:xóa commit
 * revert:không làm mất commit ,tạo thêm 1 commit mới
-**Khác nhau fetch và push**
+**Khác nhau fetch và pull**
 * fetch: cập nhật thông tin từ remote
 * pull :cập nhật thay đổi từ remote, và áp dụng luôn vào vùng làm việc
 * pull=fetch+merge
