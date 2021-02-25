@@ -74,6 +74,7 @@
 * git fetch (+origin:tên remote):tải về không tin từ remote,chưa áp dụng vào local,nhưng có thể lấy thông tin từ nó
 * git log -p -n:xem thay đổi giữa các commit
 * git diff commit commit xem sự thay đổi giữa commit trên local và remote
+<<<<<<< HEAD
 * git checkout namebranch:tải về nhánh trên remote(không tải tất cả nhánh,fetch trước đó rồi)
 * git remote -v:kiểm tra kho chứa,tên remote
 * git push origin master :đẩy dữ liệu lên remote * đẩy nhánh lên remote(nếu remote chưa tồn tại nhánh đó)
@@ -104,7 +105,7 @@
 * reset:xóa commit
 * revert:không làm mất commit ,tạo thêm 1 commit mới
 **Khác nhau fetch và pull**
-* fetch: cập nhật thông tin từ remote
+* fetch: cập nhật thông tin từ remote,không làm thay đổi thư mục làm việc
 * pull :cập nhật thay đổi từ remote, và áp dụng luôn vào vùng làm việc
 * pull=fetch+merge
 ***
