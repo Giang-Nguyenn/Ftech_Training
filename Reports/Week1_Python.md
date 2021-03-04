@@ -32,7 +32,8 @@
   * s.format(a,b,c):thay thế a,b,c vào trong các cặp {}
   * có thể đặt chỉ mục từ 0 :s="  {2} {1} {0}"
  * format với '%s': "a b %s"%('c')->"a b c" (%s,r,d,f)
- *  format với f'chuỗi':VD s="123",f"{s}456789"->"123456789" (chưa có :{{}})
+ * format với f'chuỗi':VD s="123",f"{s}456789"->"123456789" (chưa có :{{}})
+ * chuyển list thành string: s="?".join(list)->","->"?"
 ***
 ### Escape Characters:Để chèn các kí tự không hợp lệ trong một chuỗi
 * r'chuỗi':sửa các Escape Characters,làm việc với biểu thức chính quy,với file
@@ -51,18 +52,20 @@
 * Lưu trữ nhiều giá trị trong một biến 
 * thislist = ["1", 2, True] ->Có thể chứ nhiều kiểu dữ liệu,chứa cả list
 * thislist1 = list(("1", "2", "3")):danh sách trong khối lệnh
-* thislist[a,b]:  [a:b}
+* thislist[a,b]:  [a:b},[start:end:step]
 * có chỉ mục phủ định:áp dụng nếu muốn tìm kiếm từ cuối list
 * chèn(insert),thêm(append),mở rộng(+ or extends_không nhất thiết phải là list),xóa(remove("") or pop(i),del thislist[i],clear(xóa các phần tử trong list),del),
+  * del(xóa theo chỉ mục O(n-i),có thể xóa nhiều cùng lúc),pop(xóa phần tử theo chỉ mục nếu cần giá trị trả về O(n-i)),remove(xóa phần tử theo giá trị ,giá trị đầu tiên khớp O(n)),clear(xóa tất cả phần tử trong list trả về list rỗng)
 * lặp danh sách: 
   * for x in thislist :lần lượt lấy giá trí trong list gán vào x
   * Lặp qua chỉ mục: for x in range(?): x chạy từ 0 đến ?-1
   * print(x) for x in thislist
-* hiểu danh sách: newlist = [expression for item in iterable if condition == True]:expression có thể chưa điều kiện
+* hiểu danh sách: newlist = [expression for item in iterable if condition == True]:expression có thể chưa điều kiện(điều kiện của vòng for được dùng trước,các giá trị thỏa mãn đưa vào expression rồi so sánh với điều kiện ở đây)
+  * VD: s=[x if x > 2 else x*2 for x in range(1,11,1) if x > 3] ->[4->10]
 * list contructor: list(iterable),iterable(string,list...) :cấu trúc một tập hợp
 * list có thể thay đổi phần tử bằng index(chuỗi không được)
 * List thuộc kiểu tham chiếu -> nếu gán hai list với nhau khi thay đổi một trong hai(index) sẽ làm thay đổi cả hai->dùng list contructor,copy để không làm thay đổi cả hai,a=list(b)...
-* list.sort(key,reverse):reverse(chiều sắp xếp),key(funcition truyền vào)
+* list.sort(key=funcionname,reverse=True or False):reverse(chiều sắp xếp),key(funcition truyền vào):từng phần tử trong list sẽ được đưa vào funciton(list[1],list[2]...list[len-1]) để xử lý,rồi giá trị được trả về từ funcition đó sẽ được lấy để sắp xếp ,hàm truyền vào key chỉ có một tham số(nó là từng phần tử trong list truyền vào list[?])
 ***
 ### Tuples:lưu trữ nhiều mục trong một biến duy nhất
 * Được sắp xếp theo thứ tự và không thể thay đổi(bảo vệ dữ liệu dùng làm key trong dic)
@@ -79,13 +82,20 @@
 ***
 ### Dictionaries
 * Key:value
-* Sắp xếp theo thứ tự,có thể thay đổi và không trùng lặp
+* Sắp xếp theo thứ tự,có thể thay đổi và không trùng lặp(key)
 * Dùng các key để phân biệt
 * for x in namedic:danh sách tên khóa 
 * for x in namedic.values():danh sách giá trị 
 * for x,y in namedic.items():danh sách cả khóa và giá trị
 * lồng nhau:{key:{key:value}}
-* dict.get(key,default)
+* dict.get(key,default):nếu không tìm thấy key thì lấy giá trị default
+* Các cách khởi tạo:
+   * khởi tạo bằng contructor
+   * khởi tạo bằng mapping object: một object là một mapping object nếu chúng có đủ hai phương thức keys và __getitems__
+   * Khởi tạo bằng iterable: phải có cặp (key,value) 
+      * VD : ((1:2),(2:3),(3:4))
+   * khởi tạo bằng keyword arguments :dict(**kwargs)
+   * dùng fromkey: dict.fromkeys(iterable, value): các key lần lượt là các phần tử trong iterable và giá trị là value ,mặc định nếu không truyền value thì là none(truyền list vào value :cả list được đưa vào làm value chứ không phải từng phần trong list)
 ### Hashable và Unhashable...
 ***
 ### Vòng lặp

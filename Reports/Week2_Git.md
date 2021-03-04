@@ -10,7 +10,7 @@
 * git commit --amend -m"mess": không tạo mới commit,cập nhật vào commit gần nhất
 ***
 **Không theo dõi một số file**
-* gitignore:chưa danh sách các file ,thư phục không theo dõi (được đặt ở trong thư mục gốc)
+* .gitignore:chưa danh sách các file ,thư phục không theo dõi (được đặt ở trong thư mục gốc)
 ***
 **Phục hồi file**
 * git restore :phục hồi file
@@ -60,9 +60,14 @@
 * git merge namebranch: gộp nhánh namebranch vào nhánh đang đứng,lịch sử commit nhánh namebranch được thêm vào sau lịch sử nhánh đang đứng (Không xung đột )
   * Trường hợp có xung đột(cùng sửa một nhánh,pull về trước để xử lý->push)
     * git merge --abort:không merge nữa
-    * Vẫn muốn gộp ,mở file xung đột ra và chọn( or mergetool -> :+diffg:LO-nhánh đang đứng,RE-nhánh được gộp,BA-không lấy nhánh nào,lấy nd gốc trước khi sửa đổi của cả hai nhánh-wq),file xung đột vẫn lưu một file của cả hai,
+    * Vẫn muốn gộp ,mở file xung đột ra và chọn( or mergetool -> :+diffg:LO-nhánh đang đứng,RE-nhánh được gộp,BA-không lấy nhánh nào,lấy nd gốc trước khi sửa đổi của cả hai nhánh-wqa),file xung đột vẫn lưu một file của cả hai,
+      * Chấp nhận một trong hai phiên bản
+         * git checkout --ours -- filename:chấp nhận phiên bản local
+         * git checkout --theirs -- filename: chấp nhận phiên bản remote
+         * ->add,commit
  ->git add ->git commit 
       *  commit của local và remote được trộn chung theo thứ tự thời gian và một commit mới được tạo khi merge
+      *  git clean:xóa tệp .orig được tạo khi gộp 
 ***
 
 
@@ -83,6 +88,7 @@
 * git pull origin master(--all cập nhật tất cả):cập nhật dữ liệu từ remote về local
   * origin:tên remote
   * master:tên nhánh
+* git pull --rebase :đồng bộ hóa mới nhất thay đổi máy chủ từ xa (lấy + merge) và sẽ đưa địa phương cam kết mới nhất ở trên cùng trong git log
  * Trường hợp cả local và remote đều có commit mới->xung đột
    * git log --oneline origin/master:xem danh sách các commit của nhánh master trên remote origin
    * git merge origin/master:gộp nhánh master trên remote origin vào nhánh trên local
@@ -110,4 +116,6 @@
 ***
 * gitk :xem trực quan hơn các commit trong một nhánh
 * git gui:thao tác trực quan hơn 
+* git mergetool -t diffmerge
+* git mergetool -t meld
 ***
