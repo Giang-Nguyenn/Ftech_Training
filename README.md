@@ -26,4 +26,9 @@
     * Reset,Revert
     * Conflict
  * Reports/Week2_Git.md
+
+## Tuần 3
+ * Django
+   * File báo cáo trong : Reports/Week3_Django.md
+   * Demo test em sẽ gửi trước đầu tuần sau ạ 
     
