@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+</head>
+<body>
+    <div>
+    {% block header1 %} {% endblock %}
+<!--     {% block content %} {% endblock %}-->
+<!--    {% if latest_question_list %}-->
+<!--      <ul>-->
+<!--      {% for question in latest_question_list %}-->
+<!--           <li><a href="/polls/{{ question.id }}/">{{ question.question_text }}</a></li>-->
+<!--      {% endfor %}-->
+<!--      </ul>-->
+<!--    {% else %}-->
+<!--         <p>No polls are available.</p>-->
+<!--    {% endif %}-->
+
+<!--<p>{{123456789}}</p>-->
+<!--<p>{% firstof none none 123 %}</p>-->
+<!--{% firstof 123 "default" %}-->
+    </div>
+</body>
+</html>
