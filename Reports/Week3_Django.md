@@ -20,7 +20,7 @@
     'django.contrib.messages',#khung tin nhắn
     'django.contrib.staticfiles',#khuôn mẫu để quản lý các tệp tĩnh
    **MIDDLEWARE
-   **ROOT_URLCONF:mặc định sẽ chạy đường dẫn này đầu tiên
+   **ROOT_URLCONF:mặc định sẽ tải đường dẫn này đầu tiên khi vào trang web
    **TEMPLATES
    **DATABASES:database 
    **AUTH_PASSWORD_VALIDATORS
@@ -30,18 +30,21 @@
  * wsgi.py: 
 
 * py manage.py startapp appname:Tạo một web app tên là appname
-  * migrations: 
+  * migrations: chứa các lịch sử của model ,mỗi khi migrations thì sẽ có một file dc tạo
+  để lưu các thay đổi trong model
+  * migarate : đồng bộ hóa các thay đổi model với cơ sở dữ liệu 
     ** init
     ** 0001 initial :chứa câu lệnh tạo các bảng khi chạy migrate
   * admin: liên quan đến trang admin,xem những bảng,dữ liệu nào sẽ hiển thị trên trang admin
+    * admin.site.register(modelname) 
   * apps: cấu hình ứng dụng
-  * models :chứa các models có trong app
-  * test:
+  * models :chứa các models(như bảng trong database) có trong app
+  * test: 
   * urls:cấu hình các urls,điều hướng khi có các url khác nhau
   * views : điều khiển ,tương tác với dữ liệu và gọi đến các template(hiển thị)
-  * templates->appname:chứa các template để hiển thị
+  * templates->appname:chứa các template để hiển thị(HTML),khi gọi chỉ cần : appname/namefile.html
   * static-> appname: chứa các file tĩnh như css,scrips,...
-    + lấy file trong template: {% load staticfiles %}-> link(static 'appname/?')
+    + lấy file trong template: {% load staticfiles %}-> link(static 'appname/?' ): static=/appname/static/
 ***
 ### Model 
   * Thừa kế từ lớp models
@@ -65,7 +68,13 @@
 * class :Meta: lưu trữ các thông tin cấu hình về model đó: sắp xếp dữ liệu(ordering),tên bảng(db_table) ...
   *  https://docs.djangoproject.com/en/3.1/ref/models/options/
   *  thừa kế
-
+* một số câu truy vấn dữ liệu: 
+  * modelname(:,...) : tạo dữ liệu cho modelname nhưng chưa lưu -> save()
+  * modelname.objects.all(): lấy toàn bộ dữ liệu của bảng modelname
+     * modelname.objects.get(option): lấy dữ liệu có lọc
+  * modelname.modelname1_set.all() : lấy dữ liệu ở bảng modelname1 với modelname là khóa ngoại
+    * modelname.modelname1_set.all() : lấy toàn bộ
+    * modelname.modelname1_set.create(:,:) : tạo
 * cập nhật (save()),tạo và cập nhật(name.objects.create),
 * lọc dữ liệu: get(), filter() và exclude()
   * lọc số lượng bản ghi [:],không hỗ trợ chỉ số âm
@@ -75,27 +84,38 @@
   *  Field ở đây là để tạo form HTML còn field bên model là để tạo bảng CSDL(tham số nhận vào sẽ được lấy để hiển thị ra form),
 các input lable sẽ được tự sinh
  ###  View
+ * chạy vào đường dẫn được cài đặt trong ROOT_URLCF->urlpatterns[] ->appname.urls...
  * path(route,view,name)
    * route:chứa các mẫu url,định dạng bằng Regex
    * nếu tìm được mẫu phù hợp sẽ gọi đến view
-   * name:đặt tên cho các url,thuận tiện khi gọi url trong template:(url 'urlname' +?)
- * Views
+   * name:đặt tên cho các url,thuận tiện khi gọi url trong template:(url 'urlname: name' +)
+ * Regex:
+   * 
+ * views.py
  +chứa các hàm,class tương tác với database và gọi đến template
  +funcition view ,class view(có thể kế thừa)
  get_objects_or_404(Class,pk,...=?)(Không có sẽ trả về lỗi)
 +namespace: để tránh nhầm lẫn giữa các url: các app khác nhau có các name giống nhau(app_name="namespace")
 +để chỉ định những thuộc tính được hiển thị trong trang admin:
-+ tài khoản admin:
-  + py manage.py createsuperuser
-  +  cấu hình trong admins:để tùy chọn những dữ liệu được hiển thị trong trang quản trị
-     + tạo một class kế thừa từ lớp admin.ModelAdmin và khai báo một list có tên các thuộc tính muốn hiện trong trang admin  
+  +  tài khoản admin:
+    + py manage.py createsuperuser
+  + cấu hình trong admins:để tùy chọn những dữ liệu được hiển thị trong trang quản trị
+     + tạo một class(classA) kế thừa từ lớp admin.ModelAdmin và khai báo một list có tên các thuộc tính muốn hiện trong trang admin : 
+       * fields = ['?', '?','?']
+       * admin.site.register(model,classA)
+
 
 
 ### Ngôn ngữ template
-   *  {{ variable }} :Biến
+  *  {{ variable }} :Biến
       * {{value|default:"?"}}:biến không có dữ liệu thì lấy default
       *  {{name|filtename}}: bộ lọc,có thể dùng nhiều bộ lọc cùng một lúc ||
   * {% tag %} :Thẻ tag
     * Bình luận,comment: {# ???? #}h, 
     * Thừa kế :kết hợp các trang html,liên kết chúng qua các block : {% block blockname %}{% endblock %}
 ,các đoạn code sẽ được thay thế vào trong các khối,cần khai báo extends :{% extends "name.html" %}(luôn được đặt trước các thẻ còn lại)
+  * Model Form :Kế thừa từ lớp form
+     * class Meta:
+        * model  : liên hệ với các lớp trong model
+        * fields : chỉ định các trường hiển thị trong form 
+  * trong form luôn có {% csrf_token %} để bảo mật.
