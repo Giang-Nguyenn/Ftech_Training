@@ -2,10 +2,20 @@
 
 {% block title %}Đăng kí{% endblock %}
 {% block content %}
-<p>Đây là trang đăng kí</p>
-<form action="{% url 'app1:getSign' %}" method="POST">
-    {% csrf_token %}
-    {{ sign }}
-<input type="submit" value="Submit">
-</form>
+    <p>Đây là trang đăng kí</p>
+    <a href="{%  url 'app1:Home' %}"> Quay về trang chủ </a>
+    <form action="{% url 'app1:getSign' %}" method="POST">
+        {% csrf_token %}
+        {{ sign }}
+        <input type="submit" value="Submit">
+    </form>
+    {% if sign_notify_error %}
+         <script>
+             window.alert("Đăng kí không thành công đã tồn tại username ");
+         </script>
+    {% elif error%}
+         <script>
+             window.alert("Lỗi đăng kí ");
+         </script>
+    {% endif %}
 {% endblock %}

@@ -18,6 +18,6 @@ from django.urls import path, include
 #cấu hình đường dẫn url
 urlpatterns = [
     path('app1/', include('app1.urls')),#->tìm đến app.url
-    path('polls/', include('polls.urls')),
+    path('<user>/polls/', include('polls.urls'),{'a':1234}),
     path('admin/', admin.site.urls),
 ]

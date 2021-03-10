@@ -19,7 +19,16 @@ class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
+    describe = models.CharField(max_length=100, null=True)
     # mặc định "choice_set" là name quản lý sự liên quan giữa Question và Choice,thay đổi bằng related_name
 
     def __str__(self):
         return self.choice_text+" + "+str(self.votes)+"+ id:"+str(self.id)
+
+class test(models.Model):
+    name= models.CharField(max_length=100)
+    content =models.CharField(max_length=100)
+    create =models.DateTimeField(datetime.datetime.now(), null=True)
+
+    def __str__(self):
+        return self.name

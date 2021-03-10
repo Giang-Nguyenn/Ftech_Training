@@ -5,12 +5,16 @@
   * View :tương tác với dữ liệu và gọi template
   * Template :Hiển thị
 ->Tương tự MVC:(Model-Model),(View-Template),(Controler-View)
+
+
 ***
+
+
 ## django-admin startproject projectname:Tạo project với tên name
  * manage.py:tương tác với dự án Django(py manage.py để xem list)
  * Thư mục bên trong mysite/là gói Python thực cho dự án của bạn. Tên của nó là tên gói Python mà bạn sẽ cần sử dụng để nhập bất kỳ thứ gì bên trong nó (ví dụ mysite.urls).
  * __init__.py: tệp trống , để cho biết nó là một gói
- * settings.py: Cài đặt và cấu hình:
+ * settings.py: Cài đặt và cấu hình :
    **INSTALLED_APPS:Chứa tên của tất cả các ứng dụng Django được kích hoạt trong phiên bản Django này
     'polls.apps.PollsConfig',
     'django.contrib.admin',#trang web quanr trị
@@ -45,7 +49,11 @@
   * templates->appname:chứa các template để hiển thị(HTML),khi gọi chỉ cần : appname/namefile.html
   * static-> appname: chứa các file tĩnh như css,scrips,...
     + lấy file trong template: {% load staticfiles %}-> link(static 'appname/?' ): static=/appname/static/
+
+
 ***
+
+
 ### Model 
   * Thừa kế từ lớp models
   * Có các kiểu dữ liệu như :
@@ -83,12 +91,18 @@
 * Tạo form: kế thừa từ lớp forms.Form
   *  Field ở đây là để tạo form HTML còn field bên model là để tạo bảng CSDL(tham số nhận vào sẽ được lấy để hiển thị ra form),
 các input lable sẽ được tự sinh
+
+
+
  ###  View
  * chạy vào đường dẫn được cài đặt trong ROOT_URLCF->urlpatterns[] ->appname.urls...
- * path(route,view,name)
-   * route:chứa các mẫu url,định dạng bằng Regex
-   * nếu tìm được mẫu phù hợp sẽ gọi đến view
+ * path(route,view,kwargs,name)
+   * route:chứa các mẫu url,định dạng bằng Regex hoặc chuỗi
+    * '<name>/'': VD:'/123/' :giá trị 123 được lưu trong biến name có thể được dùng trong các hàm views sau đó  
+   * view: nếu tìm được mẫu phù hợp sẽ gọi đến view
+   * kwargs : từ khóa dưới dạng cặp (key:value), vẫn có thể dùng ở các url dưới  
    * name:đặt tên cho các url,thuận tiện khi gọi url trong template:(url 'urlname: name' +)
+ * re_path()
  * Regex:
    * 
  * views.py
@@ -103,13 +117,43 @@ các input lable sẽ được tự sinh
      + tạo một class(classA) kế thừa từ lớp admin.ModelAdmin và khai báo một list có tên các thuộc tính muốn hiện trong trang admin : 
        * fields = ['?', '?','?']
        * admin.site.register(model,classA)
+  * render( request , template_name , context = None , content_type = None , status = None , using = None )
+    * request : đối tượng yêu cầu
+    * template_name : trang html
+    * context : các cặp (key : value) để hiển thị trong te,plate_name
+    * contect_type : mặc định là text/html
+    * status : mã trạng thái cho phản hồi mặc định là 200
+    * using
 
 
+  * @require_http_methods( request_method_list ): chỉ chấp nhật các phương thức yêu cầu cụ thể
+
+  * Lấy dữ liệu từ form: cần dùng cleaned_data để lấy dữ liệu được post lên
+    * Cần data.is_valid()
+
+  * Session:
+  >>> color = request.session['color'] 
+>>> color1 = request.session.get('color', 'red')
+   * lấy giá trị :
+      * request.session['name']
+      * request.session.get('name','default')
+   * Thiết lập
+      * request.session['name'] = 'value'
+   *  Xóa session:
+      * del request.session['name']: xóa một session
+      * request.session.flush() : xóa toàn bộ dữ liệu session
+   * Thiết lập thời gian tồn tại :
+      * request.session.set_expiry(?) : nếu 0 là tồn tại đến khi tắt trình duyệt
+   * Kiểm tra tồn tại:
+      * 'name' in request.session
+
+***
 
 ### Ngôn ngữ template
   *  {{ variable }} :Biến
       * {{value|default:"?"}}:biến không có dữ liệu thì lấy default
-      *  {{name|filtename}}: bộ lọc,có thể dùng nhiều bộ lọc cùng một lúc ||
+      * {{name|filtename}}: bộ lọc,có thể dùng nhiều bộ lọc cùng một lúc ||
+         *  Vd: {{ name|lower }}: ch
   * {% tag %} :Thẻ tag
     * Bình luận,comment: {# ???? #}h, 
     * Thừa kế :kết hợp các trang html,liên kết chúng qua các block : {% block blockname %}{% endblock %}
@@ -119,3 +163,4 @@ các input lable sẽ được tự sinh
         * model  : liên hệ với các lớp trong model
         * fields : chỉ định các trường hiển thị trong form 
   * trong form luôn có {% csrf_token %} để bảo mật.
+

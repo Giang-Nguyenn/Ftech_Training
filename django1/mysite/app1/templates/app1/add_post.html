@@ -1,0 +1,12 @@
+{% extends "app1/base.html" %}
+
+{% block title %}AddPost{% endblock %}
+{% block content %}
+<p>Đây là Addpost</p><br>
+<a href="{% url 'app1:HomeUser'%}">Trang chủ</a>
+<form action="{% url 'app1:AddPost' %}" method="POST">
+    {% csrf_token %}
+    {{ addpost }}
+<input type="submit" value="Submit">
+</form>
+{% endblock %}

@@ -7,15 +7,15 @@ from django.http import Http404
 from .models import Question
 
 
-def indexx(request):
+def indexx(request,user,a):
+    return HttpResponse("Hello, world. You're at the polls index.%s"%user)
+    # return HttpResponse("<h1>12345</>")
+def index1(request,a):
+    return HttpResponse("Hello, world. You're at the polls index. %s"%a)
+    # return HttpResponse("<h1>1234567891111</>")
+def index2(request,user,a):
     # return HttpResponse("Hello, world. You're at the polls index.")
-    return HttpResponse("<h1>12345</>")
-def index1(request):
-    # return HttpResponse("Hello, world. You're at the polls index.")
-    return HttpResponse("<h1>1234567891111</>")
-def index2(request):
-    # return HttpResponse("Hello, world. You're at the polls index.")
-    return HttpResponse("<h1>1234567890</>")
+    return HttpResponse("<h1>1234567890 %s %s</>"%(user,a))
 # def detail(request, question_id):
 #     return HttpResponse("Detail_You're looking at question %s." % question_id)
 

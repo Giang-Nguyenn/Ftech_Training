@@ -2,11 +2,18 @@
 
 {% block title %}Home{% endblock %}
 {% block content %}
-<p>Đây là trang Home</p>
-<a href="{% url 'app1:Login' %}"> Đăng nhập </a><br>
-<a href="{% url 'app1:Sign' %}"> Đăng kí </a>
+    {% if username %}
+        <p>Đây là trang Home</p>
+        <span>Tên người dùng {{ username }}</span><br>
+    {% else %}
+    {% if 'userid' in request.session %}
+        <span>Có </span><br>
+    {% endif %}
+    {% endif %}
+    <a href="{% url 'app1:Login' %}"> Đăng nhập </a><br>
+    <a href="{% url 'app1:Sign' %}"> Đăng kí </a>
 
-<p>Các bài viết</p>
+    <p>Các bài viết</p>
 {% if post %}
    <ul>
        {% for p in post %}
@@ -14,5 +21,4 @@
         {% endfor %}
    </ul>
 {% endif%}
-
 {% endblock %}
