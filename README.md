@@ -30,5 +30,5 @@
 ## Tuần 3
  * Django
    * File báo cáo trong : Reports/Week3_Django.md
-   * Demo test em sẽ gửi trước đầu tuần sau ạ 
+   * Demo test : django/mysite/app1
     

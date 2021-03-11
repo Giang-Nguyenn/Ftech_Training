@@ -56,27 +56,41 @@
 
 ### Model 
   * Thừa kế từ lớp models
+  * Mỗi class model nếu không chỉ định trường khóa chính thì tự động sẽ được thêm một trường id(tự động tăng),nếu được chỉ định khóa chính sẽ không thêm vào nữa,mỗi class model cần có một trường khóa chính
+  * verbose_name : một tên khác của trường
   * Có các kiểu dữ liệu như :
     * Kiểu cột: database sẽ liệu những kiểu này: integer,char,text...
          * CharField:cho các chuỗi có kích thước nhỏ,phải có maxleng->truy xuất nhanh hơn TextField
-         * ForeignKey( to,on_delete,**option):mối quan hệ nhiều-một :to(bảng tham chiếu đến),on_delete()...
-        *  ManyToManyField(to, **options):quan hệ nhiều nhiều
-        *  OneToOneField(to,on_delete,parent_;link=?,**option): 1-1
-        * (https://docs.djangoproject.com/en/1.11/ref/models/fields/#model-field-types)
+         * FileField(to_upload,max_length,**option) 
+      * ForeignKey( to,on_delete,**option):mối quan hệ nhiều-một :to(bảng tham chiếu đến),on_delete()...
+        * to:bảng tham chiếu đến,tham chiếu đệ quy đến bản thân ('self'),tham chiếu đến một mô hình chưa xác định('modelname')  
+        * on_delete:
+          * CASCARE: khi xóa một đối tượng thì đối tượng liên quan chứa ForeignKey đến nó cũng bị xóa theo
+          * Protect: ngăn việc xóa đối tượng đượng tham chiếu đến
+          * Restrict: 
+      *  ManyToManyField(to, **options):quan hệ nhiều nhiều
+      *  OneToOneField(to,on_delete,parent_link=?,**option): 1-1,là khóa chính của một mô hình khác,có thể truy cập đến các trường của nhau
+      * (https://docs.djangoproject.com/en/1.11/ref/models/fields/#model-field-types)
   * Kiểu widget: khi sử dụng form (class,id :để liên kết với css)
   *  các tùy chọn :
-     *  null: True or False :nếu True thì lưu các giá trị rỗng là null trong database
+     * null: True or False :nếu True thì lưu các giá trị rỗng là null trong database
      * blank: được phép trống hay không
+     * khi CharFieldcó cả hai (unique=True, blank=True) thì null=True được yêu cầu để tránh vi phạm ràng buộc duy nhất khi lưu nhiều đối tượng với giá trị trống.
      * choices
      * default: mặc định
      * help_text: đoạn text ngắn mô tả trường này
-     * primary_key:chỉ định khóa chính,nếu không chỉ định sẽ tự động tạo một trường "id",mỗi model chỉ có một trường làm khóa chính
+     * primary_key:chỉ định khóa chính,nếu không chỉ định sẽ tự động tạo một trường "id",mỗi model chỉ có một trường làm khóa chính(tương ứng với null=False và unique=True)
      * unique: nếu bằng True thì nó là duy nhất trong toàn bộ bảng
+       * unique_for_date,month,year: không có hai bản ghi có giá trị cùng date,month,year
+     * Field.editable():Nếu False trường sẽ không được hiển thị trong quản trị viên hoặc bất kỳ trường nào khác ModelForm. Chúng cũng được bỏ qua trong quá trình xác nhận mô hình . Mặc định là True.
      * ...
+     https://docs.djangoproject.com/en/3.1/ref/models/fields/
 * class :Meta: lưu trữ các thông tin cấu hình về model đó: sắp xếp dữ liệu(ordering),tên bảng(db_table) ...
   *  https://docs.djangoproject.com/en/3.1/ref/models/options/
   *  thừa kế
-* một số câu truy vấn dữ liệu: 
+
+
+*  truy vấn dữ liệu: 
   * modelname(:,...) : tạo dữ liệu cho modelname nhưng chưa lưu -> save()
   * modelname.objects.all(): lấy toàn bộ dữ liệu của bảng modelname
      * modelname.objects.get(option): lấy dữ liệu có lọc

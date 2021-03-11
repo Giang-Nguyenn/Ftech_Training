@@ -40,16 +40,23 @@ def HomeUser(request):
         return render(request, "app1/home.html", {'post': post})
         # return HttpResponse("Không")
 def addPost(request):#thêm một bài viết
-    if request.method == "POST":
-        addpost = AddPost(request.POST)
-        if addpost.is_valid():
-            user=User.objects.get(pk=request.session["userid"])
-            user.post_set.create(postName= addpost.cleaned_data["postName"],postContent=addpost.cleaned_data['postContent'],postCreate=datetime.datetime.now())
-            userid = request.session["userid"]
-            post = User.objects.get(pk=userid).post_set.all()
-            return render(request, "app1/user_home.html",{'post': post,'username':User.objects.get(pk=userid).username})
-    addpost1= AddPost
-    return render(request, "app1/add_post.html", {'addpost': addpost1})
+    if 'userid' in request.session:
+        if request.method == "POST":
+            addpost = AddPost(request.POST)
+            if addpost.is_valid():
+                user = User.objects.get(pk=request.session["userid"])
+                user.post_set.create(postName=addpost.cleaned_data["postName"],
+                                     postContent=addpost.cleaned_data['postContent'],
+                                     postCreate=datetime.datetime.now())
+                userid = request.session["userid"]
+                post = User.objects.get(pk=userid).post_set.all()
+                return render(request, "app1/user_home.html",
+                              {'post': post, 'username': User.objects.get(pk=userid).username})
+        addpost1 = AddPost
+        return render(request, "app1/add_post.html", {'addpost': addpost1})
+    else :
+        login = LoginForm
+        return render(request, "app1/login.html", {'login': login})
 def Sign(request):#form đăng kí
     sign = SignForm
     return render(request, "app1/sign.html", {'sign': sign})
