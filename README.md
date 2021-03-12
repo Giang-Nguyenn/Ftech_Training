@@ -29,6 +29,16 @@
 
 ## Tuần 3
  * Django
+   * View, Route
+   * App/Blueprint
+   * Template"
    * File báo cáo trong : Reports/Week3_Django.md
+   * Demo test : django/mysite/app1
+## Tuần 4
+ * Django
+   * Tạo database scheme
+   * Select/Insert/Update/Delete query
+   * ORM model, migrate command
+   * File báo cáo trong :Reports/Week3,4_Django.md
    * Demo test : django/mysite/app1
     
