@@ -1,24 +1,20 @@
 {% extends "app1/base.html" %}
 
 {% block title %}Home{% endblock %}
-{% block content %}
-    {% if username %}
-        <p>Đây là trang Home</p>
-        <span>Tên người dùng {{ username }}</span><br>
-    {% else %}
-    {% if 'userid' in request.session %}
-        <span>Có </span><br>
-    {% endif %}
-    {% endif %}
-    <a href="{% url 'app1:Login' %}"> Đăng nhập </a><br>
-    <a href="{% url 'app1:Sign' %}"> Đăng kí </a>
 
+{% block header %}
+       <a href="{% url 'app1:login' %}"> Đăng nhập </a><br>
+       <a href="{% url 'app1:sign' %}"> Đăng kí </a>
+{% endblock %}
+
+
+{% block content %}
     <p>Các bài viết</p>
-{% if post %}
-   <ul>
-       {% for p in post %}
-         <li><a href=" {% url 'app1:postContent' p.id %}" >{{ p.postContent }}</a></li>
-        {% endfor %}
-   </ul>
-{% endif%}
+   {% if post %}
+       <ul>
+          {% for p in post %}
+               <li><a href=" {% url 'app1:post_content' p.id %}" >{{ p.postContent }}</a></li>
+          {% endfor %}
+       </ul>
+   {% endif%}
 {% endblock %}

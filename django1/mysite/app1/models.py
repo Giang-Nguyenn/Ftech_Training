@@ -11,9 +11,10 @@ class User(models.Model):
     username = models.CharField(max_length=25)
     mail = models.EmailField()
     password = models.CharField(max_length=15)
+    image=models.ImageField(upload_to='user',default='123')
 
     def __str__(self):
-        return self.name +"-" +str(self.id)
+        return self.name + "_" +str(self.id)
 
 
 class Post(models.Model):
@@ -24,4 +25,13 @@ class Post(models.Model):
     postCreate = models.DateTimeField(datetime.datetime.now())
 
     def __str__(self):
-        return self.postName
+        return self.postName + "_" + str(self.id)
+
+class Comment(models.Model):
+    post = models.IntegerField(default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=250)
+    create = models.DateTimeField(datetime.datetime.now())
+
+    def __str__(self):
+        return self.content + "_" +str(self.id)

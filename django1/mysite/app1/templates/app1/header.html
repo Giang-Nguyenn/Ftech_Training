@@ -1,0 +1,12 @@
+{% extends "app1/base.html" %}
+{% block header %}
+{% if 'userid' in request.session %}
+    <span>Tên người dùng là : {{ username }}</span><br>
+    <a href="{% url 'app1:logout' %}">Logout</a>
+    <p>Các bài viết</p>
+    <a href="{% url 'app1:add_post' %}">Tạo bài viết </a><br>
+{% else %}
+    <a href="{% url 'app1:login' %}"> Đăng nhập </a><br>
+    <a href="{% url 'app1:sign' %}"> Đăng kí </a>
+{% endif %}
+{% endblock %}

@@ -1,10 +1,15 @@
 {% extends "app1/base.html" %}
 
 {% block title %}Login{% endblock %}
+
+{% block header %}
+    <p>Đây là Loginn</p>
+    <a href="{%  url 'app1:home' %}"> Quay về trang chủ </a>
+{% endblock %}
+
+
 {% block content %}
-<p>Đây là Loginn</p>
-    <a href="{%  url 'app1:Home' %}"> Quay về trang chủ </a>
-    <form action="{% url 'app1:Home' %}" method="POST">
+    <form action="{% url 'app1:home' %}" method="POST">
         {% csrf_token %}
         {{ login }}
         <input type="submit" value="Submit">

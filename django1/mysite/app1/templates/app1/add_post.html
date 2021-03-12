@@ -3,8 +3,8 @@
 {% block title %}AddPost{% endblock %}
 {% block content %}
 <p>Đây là Addpost</p><br>
-<a href="{% url 'app1:HomeUser'%}">Trang chủ</a>
-<form action="{% url 'app1:AddPost' %}" method="POST">
+<a href="{% url 'app1:home_user'%}">Trang chủ</a>
+<form action="{% url 'app1:add_post' %}" method="POST">
     {% csrf_token %}
     {{ addpost }}
 <input type="submit" value="Submit">

@@ -16,10 +16,15 @@
     </option>
   </component>
   <component name="ProjectId" id="1obJLTmUaiIPmvmJgATZcqYpTjw" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/mysite/app1/templates" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\LAPTOPSIEUBEN\demo\django1\mysite\app1\templates" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\LAPTOPSIEUBEN\demo\django1\mysite\app1" />
     </key>

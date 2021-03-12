@@ -1,16 +1,45 @@
 {% extends "app1/base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}postContent{% endblock %}
+
+{% block header %}
+     {% if 'userid' in request.session %}
+          <a href="{% url 'app1:home' %}"> Trang chủ </a><br>
+     {% else %}
+          <a href="{% url 'app1:home' %}"> Trang chủ </a><br>
+          <a href="{% url 'app1:login' %}"> Đăng nhập </a><br>
+          <a href="{% url 'app1:sign' %}"> Đăng kí </a>
+     {% endif%}
+{% endblock %}
+
 {% block content %}
-<p>Nội dung </p>
-<a href="{% url 'app1:Home' %}"> Trang chủ </a><br>
-<a href="{% url 'app1:Login' %}"> Đăng nhập </a><br>
-<a href="{% url 'app1:Sign' %}"> Đăng kí </a>
+     <p>Nội dung </p>
 
-{% if post %}
-   <p> Tên bài viết : {{ post.postName}}</p>
-   <p>Nội dung bài viết : {{ post.postContent}}</p>
-   <p> Ngày tạo bài viết : {{post.postCreate}}</p>
-{% endif%}
+    {% if post %}
+          <p> Tên bài viết : {{ post.postName}}</p>
+          <p>Nội dung bài viết : {{ post.postContent}}</p>
+          <p> Ngày tạo bài viết : {{post.postCreate}}</p>
+        <form action="{% url 'app1:post_content' id  %}" method="POST">
+           {% csrf_token %}
+           {{ add_comment }}
+           <input type="submit" value="Bình luận">
+        </form>
 
+
+   <p> Các bình luận </p>
+
+   {% for list in list_comment %}
+    <div>
+       <div style="width=50px; float:left">
+           <img src="{{ list.user.image.url }}" width="20px" height="20px" float="left">
+       </div>
+       <div>
+          <span style="margin-bottom:50px;">{{ list.user.username }}</span><br>
+          <span>{{ list.content }}</span><br>
+          <span>{{ list.create }}</span>
+      </div>
+   </div>
+      <p>_________</p>
+     {% endfor %}
+   {% endif%}
 {% endblock %}

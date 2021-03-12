@@ -2,15 +2,15 @@ from django.urls import path
 from . import views
 app_name = "app1"
 urlpatterns = [
-    path('Home/', views.Home, name='Home'),
-    path('HomeUser/', views.HomeUser, name='HomeUser'),
-    path('AddPost/', views.addPost, name='AddPost'),
-    path('Sign/', views.Sign, name='Sign'),
-    path('getSign/', views.getSign, name='getSign'),
-    path('postContent/<int:id>', views.postContent, name='postContent'),
+    path('home/', views.home, name='home'),
+    path('home_user/', views.home_user, name='home_user'),
+    path('add_post/', views.add_post, name='add_post'),
+    path('sign/', views.sign, name='sign'),
+    path('get_sign/', views.get_sign, name='get_sign'),
+    path('post_content/<int:id>', views.post_content, name='post_content'),
     # path('Home/<int:n>', views.Home, name='Home'),
     # path('Home/', views.Home, name='Home'),
-    path('Login', views.Login, name='Login'),
-    path('Logout', views.Logout, name='Logout'),
+    path('login', views.login, name='login'),
+    path('logout', views.logout, name='logout'),
     path('A/', views.A, name='A'),
 ]

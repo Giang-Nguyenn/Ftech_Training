@@ -1,10 +1,14 @@
 {% extends "app1/base.html" %}
 
 {% block title %}Đăng kí{% endblock %}
-{% block content %}
+
+{% block header %}
     <p>Đây là trang đăng kí</p>
-    <a href="{%  url 'app1:Home' %}"> Quay về trang chủ </a>
-    <form action="{% url 'app1:getSign' %}" method="POST">
+    <a href="{%  url 'app1:home' %}"> Quay về trang chủ </a>
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'app1:get_sign' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ sign }}
         <input type="submit" value="Submit">
@@ -13,7 +17,7 @@
          <script>
              window.alert("Đăng kí không thành công đã tồn tại username ");
          </script>
-    {% elif error%}
+    {% elif error %}
          <script>
              window.alert("Lỗi đăng kí ");
          </script>
