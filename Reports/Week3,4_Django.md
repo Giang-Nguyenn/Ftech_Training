@@ -56,14 +56,15 @@
 
 ### Model 
   * Thừa kế từ lớp models
-  * Mỗi class model nếu không chỉ định trường khóa chính thì tự động sẽ được thêm một trường id(tự động tăng),nếu được chỉ định khóa chính sẽ không thêm vào nữa,mỗi class model cần có một trường khóa chính
-  * verbose_name : một tên khác của trường
+  * Mỗi class model nếu không chỉ định trường khóa chính thì tự động sẽ được thêm một trường id(tự động tăng-id = models.AutoField(primary_key=True)),nếu được chỉ định khóa chính sẽ không thêm vào nữa,mỗi class model cần có một trường khóa chính
+  * verbose_name : một tên khác của trường,trong các mối quan hệ (1-1,1-n,n-n) phải chỉ định rõ verbose_name="?"(vì đối số đầu tiên liên quan đến mô hình khác tham chiếu đến),không viết hoa chữ cái đầu tiên.
   * Có các kiểu dữ liệu như :
     * Kiểu cột: database sẽ liệu những kiểu này: integer,char,text...
          * CharField:cho các chuỗi có kích thước nhỏ,phải có maxleng->truy xuất nhanh hơn TextField
          * FileField(to_upload,max_length,**option) 
       * ForeignKey( to,on_delete,**option):mối quan hệ nhiều-một :to(bảng tham chiếu đến),on_delete()...
         * to:bảng tham chiếu đến,tham chiếu đệ quy đến bản thân ('self'),tham chiếu đến một mô hình chưa xác định('modelname')  
+           * mô hình ở ứng dụng khác: 'appname.modelname'
         * on_delete:
           * CASCARE: khi xóa một đối tượng thì đối tượng liên quan chứa ForeignKey đến nó cũng bị xóa theo
           * Protect: ngăn việc xóa đối tượng đượng tham chiếu đến
@@ -90,23 +91,53 @@
   *  thừa kế
 
 
-*  truy vấn dữ liệu: 
-  * modelname(:,...) : tạo dữ liệu cho modelname nhưng chưa lưu -> save()
-  * modelname.objects.all(): lấy toàn bộ dữ liệu của bảng modelname
-     * modelname.objects.get(option): lấy dữ liệu có lọc
-  * modelname.modelname1_set.all() : lấy dữ liệu ở bảng modelname1 với modelname là khóa ngoại
-    * modelname.modelname1_set.all() : lấy toàn bộ
-    * modelname.modelname1_set.create(:,:) : tạo
-* cập nhật (save()),tạo và cập nhật(name.objects.create),
-* lọc dữ liệu: get(), filter() và exclude()
-  * lọc số lượng bản ghi [:],không hỗ trợ chỉ số âm
-  * Biểu thức tìm kiếm : <tên thuộc tính>__<kiểu tìm kiếm>=<giá trị> Vd: .filter(pub_date__lte='dd-mm-dd')
-  *  Tìm kiếm đa bảng: <tên khóa ngoại>__<tên thuộc tính của bảng khác>=<giá trị>
-* Tạo form: kế thừa từ lớp forms.Form
-  *  Field ở đây là để tạo form HTML còn field bên model là để tạo bảng CSDL(tham số nhận vào sẽ được lấy để hiển thị ra form),
-các input lable sẽ được tự sinh
+*  truy vấn dữ liệu:
+  * Thêm dữ liệu :  
+      * modelname(:,...) : tạo dữ liệu cho modelname nhưng chưa lưu -> save()->create
+      * với (n-n) tạo thể hiện -> add
+  * Truy xuất các dữ liệu :
+    * modelname.objects.all(): lấy toàn bộ dữ liệu của bảng modelname
+      * modelname.objects.get(option): lấy dữ liệu có lọc
+    * modelname.modelname1_set.all() : lấy dữ liệu ở bảng modelname1 với modelname là khóa ngoại
+      * modelname.modelname1_set.all() : lấy toàn bộ
+        * [start:end:step]: dữ liệu lấy từ {start:end:step],không hỗ trợ chỉ mục âm
+      * modelname.modelname1_set.create(:,:) : tạo
+    * filter: Khớp với các điều kiện 
+    * excute: không khớp với các điều kiện :
+    * order-by : 
+      * sắp xếp (+:như Meta cài đặt,- :giảm dần,?:ngẫu nhiên)
+      * order-by('filed1','filed2'...): thứ tự filed1->filed2...
+      * order-by(): không theo thứ tự
+      * order-by('?').order-by('?').order-by('?') : chỉ gọi order-by cuối
+      * sắp xếp theo trường trong mô hình khác 'modelname__name'
+    * resever() :đảo ngược thứ tự,gọi tiếp sẽ khôi phục như bản đầu
+      * resever()[:?] : thứ tự trả về : n,n-1,...
+    * distinct(): loại bỏ trùng lặp :
+    * value('filed1','filed2'...) : trả về các trường tương ứng filed1,filed2...(value(): trả về hết các trường)...
+    *  values_list() : chỉ trả về giá trị chứ không trả về một dic
+    * có thể gọi filter(), order_by() , values() xen kẽ và không theo thứ tự
+    * union():kết hợp hai kết quả với nhau
+    * intersection()
+    * difference()
+    * select_related()
+    * prefetch_related() 
+  * cập nhật (save()),tạo và cập nhật(name.objects.create),
+  * xóa dữ liệu :delete(): trả về số đối tượng bị xóa và dic cho số lần xóa của các đối tượng,xóa cả các đối tượng có khóa ngoại chỉ vào đối tượng vừa xóa
+  * lọc dữ liệu: get(), filter() và exclude()
+    * lọc số lượng bản ghi [:],không hỗ trợ chỉ số âm
+    * Biểu thức tìm kiếm : <tên thuộc tính>__<kiểu tìm kiếm>=<giá trị> Vd: .filter(pub_date__lte='dd-mm-dd')
+    *  Tìm kiếm đa bảng: <tên khóa ngoại>__<tên thuộc tính của bảng khác>=<giá trị>
+  * Tạo form: kế thừa từ lớp forms.Form
+    *  Field ở đây là để tạo form HTML còn field bên model là để tạo bảng CSDL(tham số nhận vào sẽ được lấy để hiển thị ra form),các input lable sẽ được tự sinh
 
-
+ * Migrations
+  * makemigrations:  chịu trách nhiệm tạo di chuyển mới dựa trên những thay đổi models,lưu lịch sử thay đổi model
+    * --name :đặt tên 
+  * migrate:  áp dụng vào cơ sở dữ liệu, không áp dụng di chuyển.
+  * sqlmigrate:  hiển thị các câu lệnh SQL để di chuyển.
+  * showmigrations:  liệt kê các lần di chuyển và trạng thái của chúng.
+  * Đảo ngược : py manage.py migrate appname ?...
+    * đảo ngược tất cả zero
 
  ###  View
  * chạy vào đường dẫn được cài đặt trong ROOT_URLCF->urlpatterns[] ->appname.urls...
@@ -146,8 +177,6 @@ các input lable sẽ được tự sinh
     * Cần data.is_valid()
 
   * Session:
-  >>> color = request.session['color'] 
->>> color1 = request.session.get('color', 'red')
    * lấy giá trị :
       * request.session['name']
       * request.session.get('name','default')
@@ -172,6 +201,51 @@ các input lable sẽ được tự sinh
     * Bình luận,comment: {# ???? #}h, 
     * Thừa kế :kết hợp các trang html,liên kết chúng qua các block : {% block blockname %}{% endblock %}
 ,các đoạn code sẽ được thay thế vào trong các khối,cần khai báo extends :{% extends "name.html" %}(luôn được đặt trước các thẻ còn lại)
+
+  * autoescape(on,off) :chuyển đổi các kí tự đặc biệt trong HTML sang một dạng mã-> bảo vệ website,tắt trên từng biến (| safe)
+  * có thể gọi được phương thức nhưng là các phương thức không tham số 
+  * filter
+    * for,if..
+    * {% firstof var1 var2 var3 %}:xuất ra biến đầu tiên khác false
+    * include
+    * load :tải về tập mẫu tùy chỉnh
+    * now :hiển thị thời gian hiện tại
+      *  Thời gian {% now "jS F Y H:i" %}
+    * regroup : nhóm các danh sách theo một thuộc tính chung
+    * url: {% url 'urlname' v1 v2 ...%}
+    * add :đầu tiên sẽ ép kiểu về số nguyên, nếu không được sẽ trả về rỗng
+      * {{ value|add:"2" }} : -> value=value+2...
+      * [1, 2, 3] |add [4, 5, 6]-> [1, 2, 3, 4, 5, 6]
+    * {{ value|addslashes }}:thêm dấu \ trước dấu nháy,hữu ích cho việc thoát chuỗi trong csv
+    *  capfirst :viết hoa chữ cái đầu tiên,nếu đầu tiên không phải là chữ cái sẽ không có tác dụng
+    * {{ value|cut:"?" }} : loại bỏ tất cả "?" trong chuỗi value
+      * {{ "1 2 3" |cut:" "}} ->"123"
+    * date : định dạng ngày
+    * {{ value|default_if_none:"?" }} : nếu và chỉ nếu giá trị value là none thì sử dụng giá trị mặc định
+    * {{ value|dictsort:"name" }}: lấy danh sách từ điển và sắp xếp theo khóa được cung cấp
+    * dictsortreversed :ngược lại với dictsort
+    * {{ value|divisibleby:"?" }} : trả về True nếu value chia hết cho ?
+       * {{ value=10 | divisibleby:"2" }} -> True
+    * escape :thoát chuỗi 
+    * escapejs :thoát các kí tự trong js
+    * {{ value|first }} : trả về phần tử đầu tiên trong danh sách
+      * ['a', 'b', 'c']->'a'
+    * {{ value|floatformat:? }} :làm tròn ? chữ số phần thập phân,mặc định là 1 chữ số(nếu không có đối số mặc định là -1)
+    * join
+      * ['a', 'b', 'c'] |join:" // " -> "a // b // c"
+    * {{ value|last }} : trả về phần tử cuối trong list
+    * {{ value|length }} : trả về độ dài 
+    * {{ value|linebreaks }} : ngắt dòng 
+      * 123\4 -> <p>123<br>4</p>
+    * {{ value|linebreaksbr }} : chuyển "\"-><br>
+    * {{ value|linenumbers }} :hiển thị văn bản với số dòng,đánh số dòng cho các dòng
+    * {{ value|lower/upper }} : chuyển chuỗi thành chữ thường,chữ hoa
+    * {{ value|make_list } : chuyển thành danh sách,với số nguyên sẽ chuyển thành chuỗi rồi thành danh sách
+    * {{ value|random }} :trả về một phần tử ngẫu nhiên trong danh sách 
+    * {{ value|slice:"start:end" }} :trả về một phần của danh sách
+    * {{ value|slugify }}: chuyển đổi khoảng trắng thành dấu gạch nối,loại bỏ các ký tự không phải là chữ và số, dấu gạch dưới hoặc dấu gạch nối,chuyển đổi thành chữ thường.
+    * {{ value|wordcount }} : trả về số lượng từ
+    * static: để liên kết các tập tin tĩnh trong STATIC_ROOT
   * Model Form :Kế thừa từ lớp form
      * class Meta:
         * model  : liên hệ với các lớp trong model
