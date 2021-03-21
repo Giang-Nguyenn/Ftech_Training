@@ -57,6 +57,7 @@
 ### Model 
   * Thừa kế từ lớp models
   * Mỗi class model nếu không chỉ định trường khóa chính thì tự động sẽ được thêm một trường id(tự động tăng-id = models.AutoField(primary_key=True)),nếu được chỉ định khóa chính sẽ không thêm vào nữa,mỗi class model cần có một trường khóa chính
+    * nếu thay đổi khóa chính của một đối tượng thì đối tượng mới sẽ được tạo cùng với đối tượng cũ
   * verbose_name : một tên khác của trường,trong các mối quan hệ (1-1,1-n,n-n) phải chỉ định rõ verbose_name="?"(vì đối số đầu tiên liên quan đến mô hình khác tham chiếu đến),không viết hoa chữ cái đầu tiên.
   * Có các kiểu dữ liệu như :
     * Kiểu cột: database sẽ liệu những kiểu này: integer,char,text...
@@ -77,7 +78,8 @@
      * null: True or False :nếu True thì lưu các giá trị rỗng là null trong database
      * blank: được phép trống hay không
      * khi CharFieldcó cả hai (unique=True, blank=True) thì null=True được yêu cầu để tránh vi phạm ràng buộc duy nhất khi lưu nhiều đối tượng với giá trị trống.
-     * choices
+     * choices : một bộ hai giá trị(viết gọn,đầy đủ)
+       * hiển thị đầy đủ :  get_name_display()
      * default: mặc định
      * help_text: đoạn text ngắn mô tả trường này
      * primary_key:chỉ định khóa chính,nếu không chỉ định sẽ tự động tạo một trường "id",mỗi model chỉ có một trường làm khóa chính(tương ứng với null=False và unique=True)
@@ -86,6 +88,8 @@
      * Field.editable():Nếu False trường sẽ không được hiển thị trong quản trị viên hoặc bất kỳ trường nào khác ModelForm. Chúng cũng được bỏ qua trong quá trình xác nhận mô hình . Mặc định là True.
      * ...
      https://docs.djangoproject.com/en/3.1/ref/models/fields/
+
+
 * class :Meta: lưu trữ các thông tin cấu hình về model đó: sắp xếp dữ liệu(ordering),tên bảng(db_table) ...
   *  https://docs.djangoproject.com/en/3.1/ref/models/options/
   *  thừa kế
@@ -97,7 +101,7 @@
       * với (n-n) tạo thể hiện -> add
   * Truy xuất các dữ liệu :
     * modelname.objects.all(): lấy toàn bộ dữ liệu của bảng modelname
-      * modelname.objects.get(option): lấy dữ liệu có lọc
+      * modelname.objects.get(option): trả về đối tượng trực tiếp nếu biết nó là duy nhất
     * modelname.modelname1_set.all() : lấy dữ liệu ở bảng modelname1 với modelname là khóa ngoại
       * modelname.modelname1_set.all() : lấy toàn bộ
         * [start:end:step]: dữ liệu lấy từ {start:end:step],không hỗ trợ chỉ mục âm
@@ -121,14 +125,40 @@
     * difference()
     * select_related()
     * prefetch_related() 
+  * so sánh với các trường khác cùng mô hình:
+      VD: from django.db.models import F
+      modelname.objects.filter(filed1__gt=F('filed2'))
+    * hỗ trợ việc sử dụng cộng, trừ, nhân, chia, modulo và lũy thừa với F()các đối tượng, cả với hằng số và với các F()đối tượng khác
+      VD : modelname.objects.filter(filed1__gt=F('filed2') * 2)
+
+
+  * Field lookup
+     * exact :
+       * modelname.objects.get(headline__exact="123") :bắt đầu bằng 123...
+     * contains
+     * in : __in=[1,2,3], 'abc'->['a','b','c']
+     * ? gt(>),gte(>=),lt(<),lte(<=)...
+     * startswith,endswith,: bắt đầu ,kết thúc có phân biệt chữ hoa chữ thường (i: không phân biệt chữ hoa chữ thường)
+     * range :__range=(start,end),giống between
+     * regex 
   * cập nhật (save()),tạo và cập nhật(name.objects.create),
   * xóa dữ liệu :delete(): trả về số đối tượng bị xóa và dic cho số lần xóa của các đối tượng,xóa cả các đối tượng có khóa ngoại chỉ vào đối tượng vừa xóa
   * lọc dữ liệu: get(), filter() và exclude()
     * lọc số lượng bản ghi [:],không hỗ trợ chỉ số âm
     * Biểu thức tìm kiếm : <tên thuộc tính>__<kiểu tìm kiếm>=<giá trị> Vd: .filter(pub_date__lte='dd-mm-dd')
     *  Tìm kiếm đa bảng: <tên khóa ngoại>__<tên thuộc tính của bảng khác>=<giá trị>
+
+
   * Tạo form: kế thừa từ lớp forms.Form
     *  Field ở đây là để tạo form HTML còn field bên model là để tạo bảng CSDL(tham số nhận vào sẽ được lấy để hiển thị ra form),các input lable sẽ được tự sinh
+    * form.as_(p,ul,table): hiển thị form
+
+
+  * Xem truy vấn đang chạy
+      from django.db import connection
+      connection.queries
+
+
 
  * Migrations
   * makemigrations:  chịu trách nhiệm tạo di chuyển mới dựa trên những thay đổi models,lưu lịch sử thay đổi model
