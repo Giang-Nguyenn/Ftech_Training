@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Logout{% endblock %}
+
+{% block header %}
+    <p>Đây là Logout</p>
+{% endblock %}
+
+
+{% block content %}
+ <p>Đã đăng xuất</p>
+ <a href="{% url 'accounts:login'%}"> đăng nhập</a>
+{% endblock %}

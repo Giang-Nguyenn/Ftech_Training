@@ -1,0 +1,22 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: password reset
+From: webmaster@localhost
+To: giangcongnguyenn@gmail.com
+Date: Mon, 22 Mar 2021 04:38:38 -0000
+Message-ID: <161638791865.11204.5148293804727058434@DESKTOP-JIOLU5Q>
+
+
+To initiate the password reset process for your nguyen TestSite Account,
+click the link below:
+
+http://127.0.0.1:8000/accounts/reset/MQ/ajwtoe-81029f5eda3a98fcde9eed78028ab157/
+
+If clicking the link above doesn't work, please copy and paste the URL in a new browser
+window instead.
+
+Sincerely,
+The TestSite Team
+
+-------------------------------------------------------------------------------

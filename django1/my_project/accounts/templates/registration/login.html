@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block header %}
+    <p>Đây là Loginn</p>
+{% endblock %}
+
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="login">
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+    <a href="{% url 'social:begin' 'facebook' %}?next={% url 'accounts:home' %}">Login with Facebook</a><br>
+    <a href="{% url 'accounts:password_reset' %}">password_reset</a><br>
+{% endblock %}
