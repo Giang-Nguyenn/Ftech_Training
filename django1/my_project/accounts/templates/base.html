@@ -3,7 +3,7 @@
 <head>
     {% load static %}
   <meta charset="UTF-8">
-  <link rel="stylesheet" type="text/css" href="{% static 'app1/style.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'accounts/style.css' %}">
   <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
@@ -14,9 +14,14 @@
 {% block content %}
 
 {% if messages %}
-    {% for message in messages %}
-        {{ message }}
-    {% endfor %}
+<ul class="messages">
+  {% for message in messages %}
+  <script>
+      window.alert("Edit thành công ");
+  </script>
+    <li class="{{ message.tags }}">{{ message }}</li>
+  {% endfor %}
+</ul>
 {% endif %}
 
 {% endblock %}
