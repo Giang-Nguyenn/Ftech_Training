@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 from django.urls import reverse_lazy
 
@@ -32,7 +32,8 @@ LOGIN_URL=reverse_lazy('accounts:login')
 LOGOUT_URL=reverse_lazy('accounts:logout')
 
 
-EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_FILE_PATH = str(BASE_DIR.joinpath('sent_emails'))
 
 # Application definition
@@ -138,5 +139,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SOCIAL_AUTH_FACEBOOK_KEY = '3809142179165524'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'ecf38f4039bd8f3e266f9ec1bb977607'

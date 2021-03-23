@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Sign{% endblock %}
+
+{% block header %}
+    <p>Đây là Sign</p>
+{% endblock %}
+
+
+{% block content %}
+    <form action="#" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ sign_form.as_p }}
+        <input type="submit" value="Sign">
+        <!-- <input type="hidden" name="next" value="{{ next }}"> -->
+    </form>
+    <a href="{% url 'social:begin' 'facebook' %}?next={% url 'accounts:home' %}">Login with Facebook</a><br>
+    <a href="{% url 'accounts:password_reset' %}">password_reset</a><br>
+
+
+{% if error_notify %}
+    <script>
+        window.alert("Đăng kí không thành công  ");
+    </script>
+{% endif %}
+{% endblock %}

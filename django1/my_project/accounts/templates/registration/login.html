@@ -14,6 +14,11 @@
         <input type="submit" value="login">
         <input type="hidden" name="next" value="{{ next }}">
     </form>
+    <a href="{% url 'accounts:sign' %}">Sign</a><br>
     <a href="{% url 'social:begin' 'facebook' %}?next={% url 'accounts:home' %}">Login with Facebook</a><br>
     <a href="{% url 'accounts:password_reset' %}">password_reset</a><br>
+
+
+<!-- notify -->
+
 {% endblock %}
