@@ -39,6 +39,7 @@ EMAIL_FILE_PATH = str(BASE_DIR.joinpath('sent_emails'))
 # Application definition
 
 INSTALLED_APPS = [
+    'main_app.apps.MainAppConfig',
     'accounts.apps.AccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
