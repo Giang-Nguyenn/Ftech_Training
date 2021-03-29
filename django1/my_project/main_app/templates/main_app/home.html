@@ -1,26 +1,85 @@
-{% extends "base.html" %}
+{% extends "main_app_base.html" %}
 
 {% block title %}Trang home{% endblock %}
 
-{% block header %}
-    <p>Đây là Home</p>
-{% endblock %}
-
 {% block content %}
-   <img src="{{ user.image.url}}">
-   <p>Id là : {{ user.id }}</p>
-   <p>Tên người dùng : {{ user }}</p>
-   <a href="{% url 'accounts:edit' %}">edit profile</a><br>
-   <a href="{% url 'accounts:logout' %}">logout</a><br>
-   <a href="{% url 'accounts:logout_then_login' %}">logout_then_login</a><br>
-   <a href="{% url 'accounts:password_change' %}">password_change</a><br>
-   
-{% if messages %}
-      <ul class="messages">
-              {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-         {% endfor %}
-      </ul>
-   {% endif %}
+<div class="container-fluid" style="margin-top: 5px;height: 800px;">
+    <div class="row" style="height: 100%;">
+        <div class="col-sm-2 block_left" style="margin: 3px;">
+            <p style="text-align: center;">Các project tham gia({{ list_project|length }})</p>
+            <!-- Thêm dự án -->
+            <a href="{% url 'main_app:add_project'%}"><button type="button" class="btn btn-primary" style="float: right;padding: 3px 10px;">Add</button><br></a>
+            {% for list in list_project%}
+            <a href="{% url 'main_app:project' list.id %}" style="color: white;text-decoration: none;">
+                <div class="project_item">
+                    <span style="font-size: 20px;color: mediumspringgreen;">.</span>
+                    <span>{{ list.name }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+<!--  -->
+        <div class="col-sm-8 block_between" style="margin: 3px;">
+            <div class="row choses" >
+                <form action="{% url 'main_app:home' %}" action="get">
+                    <label for="Project">Project:</label>
+                    <select id="project" name="project">
+                      <option value="all">All</option>
+                      {% for list in list_project%}
+                      <option value={{list.id}}>{{list.name}}</option>
+                      {% endfor %}
+                    </select>
+                    <label for="Status">Status</label>
+                    <select id="status" name="status">
+                      <option value="all">Tất cả</option>
+                      <option value=-1>Đang làm</option>
+                      <option value=0>Chưa làm</option>
+                      <option value=1>Đã hoàn thành</option>
+                    </select>
+                    <input type="submit" value="Sắp xếp" id="sort" name="sort">
+                  </form>
+            </div>
+
+            {% for list in list_task %}
+            <a href="{% url 'main_app:task' list.id %}" style="text-decoration: none;">
+            <div class="row task_item">
+                <div class="col-sm-9" style="background-color: mediumspringgreen;">
+                    {{list.name}}
+                </div>
+                {% if list.status == -1  %}
+                    <div class="col-sm-1 status" style="background-color: rgb(247, 38, 10);">
+                        Doing
+                    </div>
+                {%elif list.status == 0 %}
+                    <div class="col-sm-1 status" style="background-color: rgb(245, 241, 9);">
+                        Not do
+                    </div>
+                {% else %}
+                    <div class="col-sm-1 status" style="background-color: rgb(11, 243, 11);">
+                        Done
+                    </div>
+                {% endif %}
+                 <div class="col-sm-1" style="background-color: mediumspringgreen;">
+                    Edit
+                 </div>
+                <div class="col-sm-1" style="background-color: mediumspringgreen;">
+                    {{ list.deadline}}
+                </div>
+            </div>
+            </a>
+            {% endfor %}
+        </div>
+<!--  -->
+        <div class="col-sm-2 block_right">
+            <p>Những người tham giaa</p>
+            <div class="user_item">
+                <span style="font-size: 20px;color: mediumspringgreen;">.</span>
+                <span>tên project</span>
+            </div>
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

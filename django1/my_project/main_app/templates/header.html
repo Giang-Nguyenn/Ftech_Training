@@ -1,0 +1,22 @@
+{% block header %}
+<div class="conteiner header">
+    <div class="row">
+        <div class="col-sm-3 user">
+            <img src="{{ user.image.url }}" alt="avata">
+            <a href="{% url 'accounts:home'%}"><span"><b>{{user.username}}</b></span></a>
+        </div>
+        <div class="col-sm-9">
+
+        </div>
+    </div>
+</div>
+
+<div class="container header-nav">
+    <a href="{% url 'main_app:home' %}">Home</a>
+</div>
+
+
+
+
+
+{% endblock %} 

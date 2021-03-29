@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Trang task{% endblock %}
+
+{% block header %}
+    <p>change Task</p>
+{% endblock %}
+
+{% block content %}
+<form action="#" method="post">
+    {% csrf_token %}
+    {{ task_form.as_p }}
+    <input type="submit" value="Change">
+
+</form>
+
+{% endblock %}

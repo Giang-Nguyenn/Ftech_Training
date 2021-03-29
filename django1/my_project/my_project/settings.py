@@ -27,7 +27,7 @@ SECRET_KEY = 'uo@cm+)xssx^#!yr!*p8t7o-ocih(+^(2i@mozcbr1c@@38+mo'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-LOGIN_REDIRECT_URL=reverse_lazy('accounts:home')
+LOGIN_REDIRECT_URL=reverse_lazy('main_app:home')
 LOGIN_URL=reverse_lazy('accounts:login')
 LOGOUT_URL=reverse_lazy('accounts:logout')
 

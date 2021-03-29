@@ -40,7 +40,7 @@ class Task(models.Model): # Các công việc
     note=models.TextField(blank=True) # Ghi chú thêm
     
     class Meta:
-        ordering=["status",'create_time']
+        ordering=["status",'project']
 
     def __str__(self):
         return str(self.id)+'_'+self.name

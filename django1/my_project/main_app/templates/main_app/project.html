@@ -1,0 +1,134 @@
+{% extends "main_app_base.html" %}
+
+{% block title %}Trang project{% endblock %}
+
+{% block content %}
+
+<!-- container -->
+<div class="container-fluid" style="margin-top: 5px;height: 800px;">
+    <div class="row" style="height: 100%;">
+        <div class="col-sm-2 block_left" style="margin: 3px;">
+            <p style="text-align: center;">Các project tham gia</p>
+            <button type="button" class="btn btn-primary" style="float: right; padding: 3px 10px;" >Add</button><br>
+
+            {% for list in list_project %}
+            <a href="{% url 'main_app:project' list.id %}" style="color: white;text-decoration: none;">
+                <div class="project_item">
+                    <span style="font-size: 20px;color: mediumspringgreen;">.</span>
+                    <span>{{ list.name }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+<!--  -->
+        <div class="col-sm-8 block_between" style="margin: 3px;">
+            <div class="row" style="color: black;">
+                <div class="col-sm-12">
+                    <h4>{{ project.name }}</h4>
+                    <p>Số người tham gia :{{ list_user|length}}</p>
+                    <p> Tổng số task:{{list_task|length}}</p>
+                    <p>Chưa Làm -Đang làm-Hoàn thành:{{list_count}}</p>
+                    <button class="btn btn-primary" onclick="document.getElementById('view_project').style.display='block'">Chi tiết</button>
+                </div>
+
+            </div>
+            <div class="row choses" >
+                <form action="{% url 'main_app:project' project.id %}" action="get">
+                    <label for="user">User:</label>
+                    <select id="user" name="user">
+                      <option value="all">Tất cả</option>
+                      {% for list in list_user%}
+                      <option value={{list.id}}>{{list.username}}</option>
+                      {% endfor %}
+                    </select>
+                    <label for="Status">Status</label>
+                    <select id="status" name="status">
+                      <option value="all">Tất cả</option>
+                      <option value=-1>Đang làm</option>
+                      <option value=0>Chưa làm</option>
+                      <option value=1>Đã hoàn thành</option>
+                    </select>
+                    <input type="submit" value="Sắp xếp">
+                  </form>
+            </div>
+            <p><a href="{% url 'main_app:add_task'%}"><button type="button" class="btn btn-primary" style="float: right; padding: 3px 10px;" >Add_Task</button><br></a></p>
+
+            
+            {% for list in list_task %}
+            <a href="{% url 'main_app:task' list.id %}" style="text-decoration: none;">
+            <div class="row task_item">
+                <div class="col-sm-9" style="background-color: mediumspringgreen;">
+                    {{list.name}}
+                </div>
+                {% if list.status == -1  %}
+                    <div class="col-sm-1 status" style="background-color: rgb(247, 38, 10);">
+                        Doing
+                    </div>
+                {%elif list.status == 0 %}
+                    <div class="col-sm-1 status" style="background-color: rgb(245, 241, 9);">
+                        Not do
+                    </div>
+                {% else %}
+                    <div class="col-sm-1 status" style="background-color: rgb(11, 243, 11);">
+                        Done
+                    </div>
+                {% endif %}
+                 <div class="col-sm-1" style="background-color: mediumspringgreen;">
+                    Edit
+                 </div>
+                <div class="col-sm-1" style="background-color: mediumspringgreen;">
+                    {{ list.deadline}}
+                </div>
+            </div>
+            </a>
+            {% endfor %}
+        </div>
+<!--  -->
+        <div class="col-sm-2 block_right">
+            <p>Những người tham gia ({{ list_user|length}})</p>
+            <button type="button" class="btn btn-primary" style="float: right; padding: 3px 10px;" onclick="document.getElementById('add_user').style.display='block'">Add</button><br>
+            {% for list in list_user %}
+            <div class="user_item">
+                <span style="font-size: 20px;color: mediumspringgreen;">.</span>
+                <img src="{{ list.image.url }}" alt="avata">
+                <span>{{ list.username }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Thêm user -->
+<div id="add_user" class="add_user">
+    <form class="add_user_content bg-white " action="#" method="post">
+        {% csrf_token %}
+        <p style="margin: 0px;" onclick="document.getElementById('add_user').style.display='none'" class="close" title="Close Modal">&times;</p><br>
+        <h3 style="text-align: center;">Thêm thành viên mới</h3>
+        <h4>{{ project.name}}</h4>
+        <label>Thêm</label><br>
+        {% for list in list_user_add %}
+        <input type="checkbox" id={{ list.id }} name="{{list.username}}" value="{{list.username}}">
+        <label for="{{list.username}}"> {{list.username}}</label><br>
+        {% endfor %}
+        <input type="submit" value="Add">
+ 
+    </form>
+</div>
+
+
+<!-- Xem chi tiết project -->
+<div id="view_project" class="view_project">
+    <form class="view_project_content bg-white " action="#" method="post">
+        {% csrf_token %}
+        <p style="margin: 0px;" onclick="document.getElementById('view_project').style.display='none'" class="close" title="Close Modal">&times;</p><br>
+        <h3 style="text-align: center;">{{project.name}}</h3>
+        {{ update_project_form.as_p}}
+        <p>Ngày tạo :{{ project.create_time}}</p>
+        <input type="submit" value="Change">
+ 
+    </form>
+</div>
+
+{% endblock %}

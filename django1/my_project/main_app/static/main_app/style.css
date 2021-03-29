@@ -1,10 +1,149 @@
-p {
+body {
+    background-color:#ff0000;
+}
+.header{
+    background-color: white;
+    margin: 3px;
+}
+.header .user{
+    padding: 3px;
+    padding-left: 30px;
+}
+.header-nav{
+    padding: 10px;
+    margin: 10px 0px;
+    background-color: white;
+}
+.header-nav a :hover{
+    background-color:blueviolet;
+}
+.header img{
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin:3px 0px;
+}
+
+.block_left{
+    margin: 0px !important;
+    background-color:rgb(59, 58, 58);
+    color: white;
+}
+.project_item{
+    /* background-color: red; */
+    padding: 0px;
+    margin:1px;
+}
+.block_left a :hover{
+    background-color:rgb(10, 10, 10);
+}
+
+.block_between{
+    margin: 0px !important;
+    background-color:rgb(248, 244, 244);
+    color: white;
+}
+.choses{
+    color: black ;
+    padding-left: 100px;
+}
+
+.task_item{
+    margin: 3px 5px !important;
+    height: 40px;
+    background-color: springgreen;
+}
+.task_item .status{
+    height: 100%;
+    font-size: 15px;
+    margin: auto;
+    opacity: 80%;
+}
+.task_item :hover{
+    opacity: 100%;
+}
+.block_right{
+    margin: 0px !important;
+    background-color:rgb(65, 63, 63);
+    color: white;
+}
+.user_item{
+    padding: 0px;
+    margin:1px;
+}
+.user_item img {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+.footer{
+    background-color: slategrey;
+    color:white;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 30px;
+}
+.text_input{
+    height: 100px;
+    width: 500px;
+    color: dodgerblue;
+}
+
+
+.add_user{
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+    overflow: auto;
+}
+.add_user_content{
+	width: 50%;
+	margin: 5% auto 5% auto;
+	background-color: white;
+	padding: 5px 30px;
+}
+
+.view_project{
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+    overflow: auto;
+}
+.view_project{
+	width: 80%;
+    height: 80%;
+	margin: 5% auto 5% 10%;
+	background-color: white;
+	padding: 5px 30px;
+}
+
+
+
+
+/* p {
     font-weight: bold;
     font-size: 25px;
-}
+} */
 
 img {
     border-radius: 50%;
-    height: 100px;
-    width: 100px;
+    height : 100px;
+    width : 100px;
+}
+.bg-color{
+    background-color: white;
+    margin: 10px;
 }

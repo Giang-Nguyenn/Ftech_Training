@@ -1,19 +1,25 @@
-{% extends "base.html" %}
+{% extends "main_app_base.html" %}
 
 {% block title %}Trang home{% endblock %}
 
 {% block header %}
-    <p> HomeUser</p>
+    <p>Đây là Home</p>
 {% endblock %}
 
 {% block content %}
    <img src="{{ user.image.url}}">
+   <p>Id là : {{ user.id }}</p>
    <p>Tên người dùng : {{ user }}</p>
    <a href="{% url 'accounts:edit' %}">edit profile</a><br>
    <a href="{% url 'accounts:logout' %}">logout</a><br>
    <a href="{% url 'accounts:logout_then_login' %}">logout_then_login</a><br>
    <a href="{% url 'accounts:password_change' %}">password_change</a><br>
    
+<p>Các projects tham gia</p>
+{% for list in list_project %}
+    <p>{{ list }}</p>
+{% endfor %}
+
 {% if messages %}
       <ul class="messages">
               {% for message in messages %}

@@ -1,0 +1,100 @@
+{% extends "main_app_base.html" %}
+
+{% block content %}
+
+<!-- container -->
+<div class="container-fluid" style="margin-top: 5px;height: 800px;">
+    <div class="row" style="height: 100%;">
+        <div class="col-sm-2 block_left" style="margin: 3px;">
+            <p style="text-align: center;">Các project tham gia</p>
+
+            <div class="project_item">
+                <span style="font-size: 20px;color: mediumspringgreen;">.</span>
+                <span>tên project</span>
+            </div>
+            <div class="project_item">
+                <span style="font-size: 20px;color: mediumspringgreen;">.</span>
+                <span>tên project</span>
+            </div>
+            <div class="project_item">
+                <span style="font-size: 20px;color: mediumspringgreen;">.</span>
+                <span>tên project</span>
+            </div>
+        </div>
+<!--  -->
+        <div class="col-sm-8 block_between" style="margin: 3px;">
+            <div class="row choses" >
+                <form action="#" action="get">
+                    <label for="Project">Project:</label>
+                    <select id="project" name="project">
+                      <option value="all">All</option>
+                      <option value="1">Project1</option>
+                      <option value="2">Project2</option>
+                    </select>
+                    <label for="Status">Status</label>
+                    <select id="status" name="status">
+                      <option value="-1">Đang làm</option>
+                      <option value="0">Chưa làm</option>
+                      <option value="1">Đã hoàn thành</option>
+                    </select>
+                    <input type="submit" value="Sắp xếp">
+                  </form>
+            </div>
+
+            <div class="row task_item">
+                <div class="col-sm-9" style="background-color: mediumspringgreen;">
+                    tên task
+                </div>
+                <div class="col-sm-1" style="background-color: rgb(108, 19, 224);">
+                    Status
+                 </div>
+                 <div class="col-sm-1" style="background-color: mediumspringgreen;">
+                    Edit
+                 </div>
+                <div class="col-sm-1" style="background-color: mediumspringgreen;">
+                    Deadline
+                </div>
+            </div>
+            <div class="row task_item">
+                <div class="col-sm-9" style="background-color: mediumspringgreen;">
+                    tên task
+                </div>
+                <div class="col-sm-1" style="background-color: rgb(108, 19, 224);">
+                    Status
+                 </div>
+                 <div class="col-sm-1" style="background-color: mediumspringgreen;">
+                    Edit
+                 </div>
+                <div class="col-sm-1" style="background-color: mediumspringgreen;">
+                    Deadline
+                </div>
+            </div>
+            <div class="row task_item">
+                <div class="col-sm-9" style="background-color: mediumspringgreen;">
+                    tên task
+                </div>
+                <div class="col-sm-1" style="background-color: rgb(108, 19, 224);">
+                    Status
+                 </div>
+                 <div class="col-sm-1" style="background-color: mediumspringgreen;">
+                    Edit
+                 </div>
+                <div class="col-sm-1" style="background-color: mediumspringgreen;">
+                    Deadline
+                </div>
+            </div>
+        </div>
+<!--  -->
+        <div class="col-sm-2 block_right">
+            <p>Những người tham giaa</p>
+            <div class="user_item">
+                <span style="font-size: 20px;color: mediumspringgreen;">.</span>
+                <span>tên project</span>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
