@@ -41,10 +41,12 @@ class Sign(View): # Đăng kí
                     messages.success(request,"Đăng kí thành công thành công ")
                     return redirect('accounts:login')
 
-          error_notify="Error"
-          sign_form=SignForm
-          messages.error(request,"Lỗi")
-          return render(request,'registration/sign_form.html',{'sign_form': sign_form,'error_notify':error_notify})
+          # error_notify="Error"
+          # sign_form=SignForm
+          # messages.error(request,"Lỗi")
+          # return render(request,'registration/sign_form.html',{'sign_form': sign_form,'error_notify':error_notify})
+          # sign_form=SignForm
+          return render(request,'registration/sign_form.html',{'sign_form': sg})
 
 
 class Edit(LoginRequiredMixin,View): # Chỉnh sửa thông tin người dùng

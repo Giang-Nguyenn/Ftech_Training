@@ -3,12 +3,17 @@
 {% block title %}Trang home{% endblock %}
 
 {% block content %}
-<div class="container-fluid" style="margin-top: 5px;height: 800px;">
+
+<!-- Left -->
+<div class="container-fluid" style="margin-top: 5px;height: 1000px;">
     <div class="row" style="height: 100%;">
         <div class="col-sm-2 block_left" style="margin: 3px;">
             <p style="text-align: center;">Các project tham gia({{ list_project|length }})</p>
             <!-- Thêm dự án -->
-            <a href="{% url 'main_app:add_project'%}"><button type="button" class="btn btn-primary" style="float: right;padding: 3px 10px;">Add</button><br></a>
+            <!-- Ẩn hiện nút add project cho người có quyền -->
+            {% if user.is_superuser %}
+            <a href="{% url 'main_app:add_project' %}"><button type="button" class="btn btn-primary" style="float: right;padding: 3px 10px;">Add</button><br></a>
+            {% endif %}
             {% for list in list_project%}
             <a href="{% url 'main_app:project' list.id %}" style="color: white;text-decoration: none;">
                 <div class="project_item">
@@ -18,59 +23,88 @@
             </a>
             {% endfor %}
         </div>
-<!--  -->
-        <div class="col-sm-8 block_between" style="margin: 3px;">
+
+<!-- Betwwen -->
+        <div class="col-sm-10 block_between" style="margin: 3px;">
+             <!-- Thanh chọn lọc -->
             <div class="row choses" >
                 <form action="{% url 'main_app:home' %}" action="get">
                     <label for="Project">Project:</label>
                     <select id="project" name="project">
-                      <option value="all">All</option>
+                      <option value="all" {% if choice_project == 'all' %} selected {%endif%}>All</option>
                       {% for list in list_project%}
-                      <option value={{list.id}}>{{list.name}}</option>
+                      <option value={{list.id}} {% if choice_project == list.id %} selected {%endif%}>{{list.name}}</option>
                       {% endfor %}
                     </select>
                     <label for="Status">Status</label>
                     <select id="status" name="status">
-                      <option value="all">Tất cả</option>
-                      <option value=-1>Đang làm</option>
-                      <option value=0>Chưa làm</option>
-                      <option value=1>Đã hoàn thành</option>
+                      <option value="all" {% if choice_status == 'all' %} selected {%endif%}>Tất cả</option>
+                      <option value=-1 {% if choice_status == '-1' %} selected {%endif%}>Đang làm</option>
+                      <option value=0 {% if choice_status == '0' %} selected {%endif%}>Chưa làm</option>
+                      <option value=1 {% if choice_status == '1' %} selected {%endif%}>Đã hoàn thành</option>
                     </select>
-                    <input type="submit" value="Sắp xếp" id="sort" name="sort">
+                    <input type="text" id='keyword' name="keyword" placeholder="Keyword" value={{choice_keyword}}>
+                    <input type="submit" value="Tìm kiếm" name="seach">
                   </form>
             </div>
-
+            
+            
+            <!-- Thanh tittle  -->
+            <div class="row task_item" style="font-size: 15px;">
+                <div class="col-sm-8" style="background-color:rgb(21, 93, 228)">
+                    TaskName
+                </div>
+                <div class="col-sm-1 " style="background-color:rgb(21, 93, 228);">
+                   Project
+                </div>
+                <div class="col-sm-2" style="background-color:rgb(21, 93, 228)">
+                    Start-End
+                </div>
+                <div class="col-sm-1" style="background-color:rgb(21, 93, 228)">
+                    Deadline
+                </div>
+            </div>
+            <!-- List các task -->
             {% for list in list_task %}
-            <a href="{% url 'main_app:task' list.id %}" style="text-decoration: none;">
-            <div class="row task_item">
-                <div class="col-sm-9" style="background-color: mediumspringgreen;">
+            <a href="{% url 'main_app:update_task' list.id %}" style="text-decoration: none;">
+            <div class="row task_item" 
+            style="background-color: {% if list.status == -1 %} rgb(247, 34, 6) {% elif list.status == 0 %} rgb(197, 194, 5) {% else %} rgb(8, 156, 8) {% endif %};">
+                <div class="col-sm-8 ">
                     {{list.name}}
                 </div>
-                {% if list.status == -1  %}
-                    <div class="col-sm-1 status" style="background-color: rgb(247, 38, 10);">
-                        Doing
-                    </div>
-                {%elif list.status == 0 %}
-                    <div class="col-sm-1 status" style="background-color: rgb(245, 241, 9);">
-                        Not do
-                    </div>
-                {% else %}
-                    <div class="col-sm-1 status" style="background-color: rgb(11, 243, 11);">
-                        Done
-                    </div>
-                {% endif %}
-                 <div class="col-sm-1" style="background-color: mediumspringgreen;">
-                    Edit
-                 </div>
-                <div class="col-sm-1" style="background-color: mediumspringgreen;">
-                    {{ list.deadline}}
+                <div class="col-sm-1">
+                    {{list.project}}
+                </div>
+                <div class="col-sm-2">
+                    {{list.start|date:"SHORT_DATE_FORMAT"}}-{{list.end|date:"SHORT_DATE_FORMAT"}}
+                </div>
+                <div class="col-sm-1">
+                    {{ list.deadline|date:"SHORT_DATE_FORMAT"}}
                 </div>
             </div>
             </a>
             {% endfor %}
+            <div class="pagination">
+                <span class="step-links" style="margin: 5px;">
+                    {% if list_task.has_previous %}
+                        <a href="?page={{ list_task.previous_page_number }}" id='previous' onclick="seach('previous',{{ list_task.previous_page_number }})">Trang {{ list_task.previous_page_number }}</a>
+                    {% endif %}
+                </span>
+             
+                <span class="current" style="margin: 5px;">
+                    Page {{ list_task.number }} of {{ list_task.paginator.num_pages }}.
+                </span>
+                 
+                <span style="margin: 5px;">
+                    {% if list_task.has_next %}
+                        <a href="?page={{ list_task.next_page_number }} " id="page" onclick="seach('page',{{ list_task.next_page_number }})">Trang {{ list_task.next_page_number }} </a>
+                    {% endif %}
+                </span>
+            </div>
         </div>
-<!--  -->
-        <div class="col-sm-2 block_right">
+
+<!-- Right -->
+        <!-- <div class="col-sm-2 block_right">
             <p>Những người tham giaa</p>
             <div class="user_item">
                 <span style="font-size: 20px;color: mediumspringgreen;">.</span>
@@ -80,6 +114,15 @@
 
     </div>
 
-</div>
+</div> -->
+<script>
+    // lấy trạng thái của chose project,status và keyword để gửi cùng với  page
+    function seach(id,pagenumber){
+        project='&project='+document.getElementById('project').value;
+        status='&status='+document.getElementById('status').value;
+        keyword='&keyword='+document.getElementById('keyword').value;
+        document.getElementById(id).href="?page="+pagenumber+project+status+keyword+'&seach=true';
+    }
+</script>
 
 {% endblock %}

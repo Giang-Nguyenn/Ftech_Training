@@ -12,9 +12,12 @@ class SignForm(forms.ModelForm):
 
     def clean_password2(self):
         cd=self.cleaned_data
-        if cd['password'] != cd['password2']:
-            raise forms.ValidationError("Trùng password")
-        return cd['password2']
+        if cd['password'] == cd['password2']:
+            return cd['password2']
+            
+        raise forms.ValidationError("không Trùng passworddđ")
+    
+        
 
 class EditForm(forms.ModelForm):
     class Meta:

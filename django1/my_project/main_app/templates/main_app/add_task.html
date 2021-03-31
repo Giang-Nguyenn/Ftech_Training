@@ -1,8 +1,49 @@
 {% extends "main_app_base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
-<form action="{% url 'main_app:add_task' %}" method="post">
+<form action="#" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="AddTask">
+    <div class="form" >
+        <div class="row">
+            <div class="col-sm-12">
+                {{ task_form.name|as_crispy_field }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                {{ task_form.project|as_crispy_field }}
+            </div>
+            <div class="col-sm-6">
+                {{ task_form.user|as_crispy_field }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 ">
+                {{ task_form.describe|as_crispy_field }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                {{ task_form.status|as_crispy_field }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                {{ task_form.start|as_crispy_field }}
+            </div>
+            <div class="col-sm-4">
+                {{ task_form.end|as_crispy_field }}
+            </div>
+            <div class="col-sm-4">
+                {{ task_form.deadline|as_crispy_field }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                {{ task_form.note|as_crispy_field }}
+            </div>
+        </div>
+       <input class="btn btn-primary" type="submit" value="AddTask" name="AddTask">
+    </div>
 </form>
 {% endblock %}

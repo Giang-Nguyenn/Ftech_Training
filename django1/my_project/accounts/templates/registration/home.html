@@ -13,7 +13,6 @@
    <a href="{% url 'accounts:logout' %}">logout</a><br>
    <a href="{% url 'accounts:logout_then_login' %}">logout_then_login</a><br>
    <a href="{% url 'accounts:password_change' %}">password_change</a><br>
-   
 {% if messages %}
       <ul class="messages">
               {% for message in messages %}

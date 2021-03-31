@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social_django',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +145,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SOCIAL_AUTH_FACEBOOK_KEY = '3809142179165524'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'ecf38f4039bd8f3e266f9ec1bb977607'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
