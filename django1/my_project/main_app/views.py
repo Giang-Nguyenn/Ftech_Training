@@ -3,14 +3,17 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 from django.views import View
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import permission_required
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.contrib.auth.models import User
 from main_app.models import Projects,UserProject,Task,UserSetting
-from .forms import TaskForm,ProjectForm,UpdateProject,TaskFormAdd,TaskFormUpdate,TaskFormAdd1
+from .forms import TaskForm,ProjectForm,UpdateProject,TaskFormAdd,TaskFormUpdate
 # Create your views here.
 
 
@@ -19,10 +22,6 @@ class Home(LoginRequiredMixin,View): # Màn hình người dùng
     
     def get(self,request):
         if request.GET.get('seach'): # Có yêu cầu tìm kiếm
-            # if request.GET['keyword'] !='':
-            #     list_task=Task.objects.filter(name__icontains=request.GET['keyword'])
-            # else:
-            #     list_task=Task.objects.filter(name__icontains=request.GET['keyword'])
             choice_project=request.GET['project']
             choice_status=request.GET['status']
             choice_keyword=request.GET['keyword']
@@ -40,7 +39,7 @@ class Home(LoginRequiredMixin,View): # Màn hình người dùng
             # Convert choice_project về int nếu nó khác 'all'
             if choice_project!='all': #...
                 choice_project=int(choice_project)
-        else: # không có yêu cầu tìm kiếm được gửi
+        else: # Không có yêu cầu tìm kiếm được gửi
             list_task=Task.objects.filter(user=request.user)
             choice_project='all'
             choice_status='all'
@@ -63,86 +62,7 @@ class Home(LoginRequiredMixin,View): # Màn hình người dùng
                                                       'choice_status':choice_status,
                                                       'choice_keyword':choice_keyword
                                                       })
-        # if request.GET.get('Sort'): # Yêu cầu sắp xếp *
-        #     usersetting=UserSetting.objects.filter(user=request.user)
-        #     if usersetting: # nếu có thì cập nhật
-        #         usersetting.update(home_project=request.GET['project'],
-        #                            home_status=request.GET['status']
-        #                            )
-        #     else : # Chưa có thì tạo mới
-        #         UserSetting.objects.create(user=request.user,home_project=request.GET['project'],
-        #                            home_status=request.GET['status']
-        #                             )
-        # if not UserSetting.objects.filter(user=request.user):
-        #     UserSetting.objects.create(user=request.user)
-        # choice_project=UserSetting.objects.get(user=request.user).home_project
-        # choice_status=UserSetting.objects.get(user=request.user).home_status
-        # # lấy list_task
-        # if choice_project=='all' and choice_status=='all':
-        #     list_task = Task.objects.filter(user=request.user)
-        # elif choice_project=='all' and choice_status!='all':
-        #     list_task = Task.objects.filter(user=request.user,status=choice_status)
-        # elif choice_project!='all' and choice_status=='all':
-        #     list_task = Task.objects.filter(user=request.user,project=choice_project)
-        # else:
-        #     list_task = Task.objects.filter(user=request.user,project=choice_project,status=choice_status)
-        # # Phân trang
-        # paginator = Paginator(list_task, 15)
-        # pageNumber = request.GET.get('page')
-        # try:
-        #     l_task = paginator.page(pageNumber)
-        # except PageNotAnInteger:
-        #     l_task = paginator.page(1)
-        # except EmptyPage:
-        #     l_task = paginator.page(paginator.num_pages)
-            
-        # if choice_project!='all': #...
-        #     choice_project=int(choice_project) 
-        # return render(request, 'main_app/home.html', {'list_project':list_project,
-        #                                             'list_task':l_task,
-        #                                             'choice_project':choice_project,
-        #                                             'choice_status':choice_status})
 
-            # if request.GET['project']=='all' and request.GET['status']=='all':
-            #     list_task = Task.objects.filter(user=request.user)
-            # elif request.GET['project']=='all' and request.GET['status']!='all':
-            #     list_task = Task.objects.filter(user=request.user,status=request.GET['status'])
-            # elif request.GET['project']!='all' and request.GET['status']=='all':
-            #     list_task = Task.objects.filter(user=request.user,project=request.GET['project'])
-            # else:
-            #     list_task = Task.objects.filter(user=request.user,project=request.GET['project'],status=request.GET['status'])
-            # if request.GET['project']=='all': #...
-            #     choice_project=request.GET['project']
-            # else:
-            #     choice_project=int(request.GET['project']) 
-            # choice_status=request.GET['status']
-            # paginator = Paginator(list_task, 5)
-            # pageNumber = request.GET.get('page')
-            # try:
-            #     task = paginator.page(pageNumber)
-            # except PageNotAnInteger:
-            #     task = paginator.page(1)
-            # except EmptyPage:
-            #     task = paginator.page(paginator.num_pages)
-            # return render(request, 'main_app/home.html', {'list_project':list_project,
-            #                                               'list_task':task,# list_task
-            #                                               'choice_project':choice_project,
-            #                                               'choice_status':choice_status})
-
-        # Home 
-        # list_task = Task.objects.filter(user=request.user)
-        # Thêm
-        # paginator = Paginator(list_task, 5)
-        # pageNumber = request.GET.get('page')
-        # try:
-        #     task = paginator.page(pageNumber)
-        # except PageNotAnInteger:
-        #     task = paginator.page(1)
-        # except EmptyPage:
-        #     task = paginator.page(paginator.num_pages)
-        #hết
-        # return render(request, 'main_app/home.html', {'list_project':list_project,
-        #                                               'list_task':list_task}) #list_task
     
 
     def post(self,request):
@@ -153,6 +73,8 @@ class ViewProject(LoginRequiredMixin,View): # Trang xem project
     login_url='accounts:login'
 
     def get(self,request,id):
+        if not UserProject.objects.filter(project=id,user=request.user): # Kiểm tra user có trong project 
+            raise PermissionDenied()
         project = Projects.objects.get(pk=id) # project
         if request.GET.get('seach'): # Có yêu cầu tìm kiếm
             choice_user=request.GET['user']
@@ -209,27 +131,9 @@ class ViewProject(LoginRequiredMixin,View): # Trang xem project
                                                       })
 
 
-    def post(self,request,id):
-        # project: Thêm ,xoá thành viên
-        if request.POST.get('add_user') is not None: # Thêm thành viên
-            list_user=request.POST.getlist('add_user')
-            pr=Projects.objects.get(pk=id)
-            for user in list_user:
-                UserProject.objects.create(project=pr,user=User.objects.get(pk=user))
-            messages.success(request,'Thêm thành công ')
-            return redirect('/projects/%s'%id)
-
-        if request.POST.get('delete_user') is not None: # Xoá thành viên
-            list_user=request.POST.getlist('delete_user')
-            pr=Projects.objects.get(pk=id)
-            # for user in list_user:
-            UserProject.objects.filter(project=pr,user__id__in=list_user).delete()
-            return redirect('/projects/%s'%id)
-
-        redirect('/home')
 
 
-class TaskCRUD(LoginRequiredMixin,View): # xem các task
+class TaskCRUD(LoginRequiredMixin,View): # Xem các task
     login_url='accounts:login'
     
     def get(self,request,id):
@@ -239,24 +143,35 @@ class TaskCRUD(LoginRequiredMixin,View): # xem các task
             return render(request,'main_app/update_task.html',{'task_form':task_form})
         
         if 'add_task' in request.path:
+            if not request.user.has_perm('main_app.add_task'):
+                raise PermissionDenied()
             task_form=TaskFormAdd(project_id=id) 
             # task_form=TaskFormAdd
             return render(request,'main_app/add_task.html',{'task_form':task_form})
     
     def post(self,request,id): # POST,id là id của task
-        if request.POST.get('UpdateTask') is not None: # update task
+        if request.POST.get('UpdateTask') is not None: # Update task
+            '''
+            Chỉ người có quyền hoặc người nhận task mới được thay đổi task
+            '''
+            if (not request.user.has_perm('main_app.change_task') and 
+                Task.objects.get(pk=id).user !=request.user ):
+                messages.warning(request,"Bạn không có quyền sửa task này")
+                return redirect('/projects/%s'%Task.objects.get(pk=id).project.id)
+                # raise PermissionDenied()
+               
             task_update=TaskFormUpdate(request.POST,project_id=Task.objects.get(pk=id).project.id)
             if task_update.is_valid():
                 data=task_update.cleaned_data
                 task=Task.objects.filter(pk=id).update(name=data['name'],
-                                                               project=data['project'],
-                                                               user=data['user'],
-                                                               describe=data['describe'],
-                                                               status=data['status'],
-                                                               deadline=data['deadline'],
-                                                               start=data['start'],
-                                                               end=data['end'],
-                                                               note=data['note'])
+                                                        project=data['project'],
+                                                        user=data['user'],
+                                                        describe=data['describe'],
+                                                        status=data['status'],
+                                                        deadline=data['deadline'],
+                                                        start=data['start'],
+                                                        end=data['end'],
+                                                        note=data['note'])
                 pr_id=Task.objects.get(pk=id).project.id
                 messages.success(request,'Update thành công')
                 return redirect('/projects/%s'%pr_id)
@@ -264,6 +179,9 @@ class TaskCRUD(LoginRequiredMixin,View): # xem các task
             return render(request,'main_app/update_task.html',{'task_form':task_update})
         
         if request.POST.get('AddTask') is not None: # add task,id là id project
+            if not request.user.has_perm('main_app.add_task'):
+                raise PermissionDenied()
+
             task_add=TaskFormAdd(request.POST,project_id=id)
             if task_add.is_valid():
                 task_add.save()
@@ -273,6 +191,9 @@ class TaskCRUD(LoginRequiredMixin,View): # xem các task
             return render(request,'main_app/add_task.html',{'task_form':task_add})
         
         if request.POST.get('DelTask') is not None: # delete task,id là id task
+            if not request.user.has_perm('main_app.delete_task'):
+                messages.warning(request,"Bạn không có quyền xoá task")
+                return redirect('/projects/%s'%Task.objects.get(pk=id).project.id)
             pr_id=Task.objects.get(pk=id).project.id
             Task.objects.filter(pk=id).delete()
             messages.success(request,"Xoá thành công task")
@@ -288,19 +209,22 @@ class ViewTask(LoginRequiredMixin,View): # xem các task
         return render(request,'main_app/task.html',{'task_form':task_form})
 
 
-class ProjectCRUD(LoginRequiredMixin,View): #thêm sửa xoá cập nhật dự án mới
+class ProjectCRUD(LoginRequiredMixin,PermissionRequiredMixin,View): #thêm sửa xoá cập nhật dự án mới
     login_url='accounts:login'
-    
+    permission_required = ('main_app.add_projects',
+                           'main_app.change_projects',
+                           'main_app.delete_projects',)
+
     def get(self,request):
         if 'add_project' in request.path: # Form add Project
             projetc_form=ProjectForm
             return render(request,'main_app/add_project.html',{'form': projetc_form})
         
         if 'update_project' in request.path: # Form Update project
-            return HttpResponse('update')
+            pass
         
         if 'del_project' in request.path: # xoá projetc
-            return HttpResponse('del')
+            pass
 
         return redirect('/home')
     
@@ -323,20 +247,21 @@ class ProjectCRUD(LoginRequiredMixin,View): #thêm sửa xoá cập nhật dự 
             a=request.POST['project_id']
             if form_update.is_valid():
                 Projects.objects.filter(pk=a).update(name=form_update.cleaned_data['name'],
-                                                                        describe=form_update.cleaned_data['describe'],
-                                                                        note=form_update.cleaned_data['note'],
-                                                                        )
+                                                    describe=form_update.cleaned_data['describe'],
+                                                    note=form_update.cleaned_data['note'],
+                                                    )
                 messages.success(request,'Update thành công project')
                 return redirect('/projects/%s'%a)
             messages.error(request,'Error')
             return redirect('/projects/%s'%a)
-        return HttpResponse('123')
+        return HttpResponse('?')
         
 
-class UpdateUserProject(LoginRequiredMixin,View):
+class UpdateUserProject(LoginRequiredMixin,PermissionRequiredMixin,View):
     login_url='accounts:login'
+    permission_required = ('main_app.change_projects') # Quyền thay đổi project
     def post(self,request,id):
-        if request.POST.get('ProjectAddUser'):
+        if request.POST.get('ProjectAddUser'): # Add
             list_user=request.POST.getlist('add_user')
             pr=Projects.objects.get(pk=id)
             for user in list_user:
@@ -345,7 +270,7 @@ class UpdateUserProject(LoginRequiredMixin,View):
             return redirect('/projects/%s'%id)
             # return HttpResponse('%s'%list_user)
 
-        if request.POST.get('ProjectDelUser'): 
+        if request.POST.get('ProjectDelUser'):  # Delete
             '''
             Xoá user khỏi project
             Các task chưa làm và đang làm sẽ đưa về trạng thái chưa làm,và chưa có người làm
@@ -365,7 +290,17 @@ class UpdateUserProject(LoginRequiredMixin,View):
 
 
 
-
+@permission_required('main_app.add_project','main_app:home')
 def demo(request):
+    # return HttpResponse('có')
+    # if request.user.has_perm('main_app.add_task'): # Kiểm tra quyền
+    #     return HttpResponse('có')
+    # raise PermissionDenied()
+
+    # if request.user.is_superuser: # Kiểm tra có phải superuser
+    #     return HttpResponse('Là superuser')
+    # else:
+    #     return HttpResponse('Không phải superuser')
+
     messages.warning(request,'Success ok')
     return render(request,'demo.html')

@@ -11,7 +11,7 @@
             <p style="text-align: center;">Các project tham gia({{ list_project|length }})</p>
             <!-- Thêm dự án -->
             <!-- Ẩn hiện nút add project cho người có quyền -->
-            {% if user.is_superuser %}
+            {% if perms.main_app.add_projects %}
             <a href="{% url 'main_app:add_project' %}"><button type="button" class="btn btn-primary" style="float: right;padding: 3px 10px;">Add</button><br></a>
             {% endif %}
             {% for list in list_project%}

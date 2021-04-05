@@ -9,7 +9,8 @@
     <div class="row" style="height: 100%;">
         <div class="col-sm-2 block_left" style="margin: 3px;">
             <p style="text-align: center;">Các project tham gia ({{list_project|length}})</p>
-            {% if user.is_superuser %}
+            <!-- Hiển thị nút Add cho người có quyền add -->
+            {% if perms.main_app.add_projects %}
             <a href="{% url 'main_app:add_project' %}"><button type="button" class="btn btn-primary" style="float: right;padding: 3px 10px;">Add</button><br></a>
             {% endif %}
 
@@ -54,7 +55,8 @@
                     <input type="submit" value="Tìm kiếm" name="seach">
                   </form>
             </div>
-            {% if user.is_superuser %}
+            <!-- Hiển thị nút add cho người có quyền -->
+            {% if perms.main_app.add_task %}
             <p><a href="{% url 'main_app:add_task' project.id %}"><button type="button" class="btn btn-primary" style="float: right; padding: 3px 10px;" >Add_Task</button><br></a></p>
             {% endif %}
 
@@ -114,7 +116,8 @@
 <!-- left -->
         <div class="col-sm-2 block_right">
             <p>Những người tham gia ({{ list_user|length}})</p>
-            {%if user.is_superuser%}
+            <!-- Hiển thị nút cho người có quyền  -->
+            {% if perms.main_app.change_projects %}
             <button type="button" class="btn btn-primary" style="float: right; padding: 3px 10px;" onclick="document.getElementById('add_user').style.display='block'">Add</button>
             <button type="button" class="btn btn-primary" style="float: right; padding: 3px 10px;" onclick="document.getElementById('delete_user').style.display='block'">Delete</button><br>
             {% endif %}
@@ -175,7 +178,8 @@
         <input name="project_id" value="{{project.id}}">
         <p>Ngày tạo :{{ project.create_at}}</p>
         <p>Ngày cập nhật :{{ project.update_at}}</p>
-        {% if user.is_superuser %}
+        <!-- Hiển thị nút cho người có quyền -->
+        {% if perms.main_app.change_projects %}
         <input type="submit" value="UpdateProject" name="UpdateProject">
         {% endif %}
     </form>
