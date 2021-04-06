@@ -1,24 +1,29 @@
 {% extends "base.html" %}
-
+{% load crispy_forms_tags %}
 {% block title %}Edit{% endblock %}
 
 {% block header %}
-    <p>Đây là Edit</p>
-    <a href="{% url 'accounts:home' %}">Home</a>
 {% endblock %}
 
 
 {% block content %}
-    <form action="" method="post" enctype="multipart/form-data">
+<div class="form_accounts" style="margin-top: 5px;width: 400px;">
+    <a href="{% url 'accounts:home' %}">Home</a>
+    <form  class='form_accounts_edit' action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <p>First_name : {{ form.first_name }} </p>
-        <p>Last_name : {{ form.last_name }} </p>
-        <p>Email : {{ form.email }}</p>
+        <label>First_name :</label>
+        {{ form.first_name }}
+        <label>Last_name :  </label>
+        {{ form.last_name }} 
+        <label>Email :</label>
+        {{ form.email }}
         <img src="{{ user.image.url }}"><br>
-        <p>Image : {{ form.image }} </p>
-        <input type="submit" value="Chỉnh sửa">
+        <label>Image : {{ form.image }} </label><br>
+        <input  class="btn btn-primary" type="submit" value="Chỉnh sửa" style="width: 100%;">
         <input type="hidden" name="next" value="{{ next }}">
     </form>
+</div>
+
 
 <!-- notify -->
 

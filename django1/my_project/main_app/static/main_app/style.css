@@ -1,9 +1,10 @@
 body {
+    font-family: Arial, Helvetica, sans-serif;
     background-color:#ff0000;
 }
 .header{
     background-color: white;
-    margin: 3px;
+    box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.2), 0 0px 3px 0 rgba(0, 0, 0, 0.19);
 }
 .header .user{
     padding: 3px;
@@ -13,6 +14,7 @@ body {
     padding: 10px;
     margin: 10px 0px;
     background-color: white;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.089), 0 0px 5px 0 rgba(0, 0, 0, 0.19);
 }
 .header-nav a :hover{
     background-color:blueviolet;
@@ -26,13 +28,13 @@ body {
 
 .block_left{
     margin: 0px !important;
-    background-color:rgb(59, 58, 58);
+    padding: 0 !important;
     color: white;
+    background-color:rgb(59, 58, 58);
 }
 .project_item{
-    /* background-color: red; */
-    padding: 0px;
-    margin:1px;
+    padding: 1px;
+    padding-left: 10px;
 }
 .block_left a :hover{
     background-color:rgb(10, 10, 10);
@@ -40,12 +42,15 @@ body {
 
 .block_between{
     margin: 0px !important;
-    background-color:rgb(248, 244, 244);
+    background-color: white;
     color: white;
 }
 .choses{
     color: black ;
-    padding-left: 100px;
+    margin-top: 10px;
+}
+.choses_form{
+    margin: 3px 20px !important;
 }
 
 .task_item{
@@ -57,7 +62,19 @@ body {
 }
 .task_item:hover{
     opacity: 100%;
-    font-size: 15px;
+    font-size: 14px;
+}
+.task_item_inner_title{
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    font-weight: bold;
+}
+.task_item_inner{
+    display: flex;
+    align-items: center;
+    max-height: 100%;
+    overflow-x: auto;
 }
 .block_right{
     margin: 0px !important;
@@ -67,6 +84,7 @@ body {
 .user_item{
     padding: 0px;
     margin:1px;
+    font-size: 15px;
 }
 .user_item img {
     height: 30px;
@@ -75,11 +93,13 @@ body {
 }
 
 .footer{
-    background-color: slategrey;
+    background-image: linear-gradient(to right, rgba(8, 138, 245, 0.815), rgb(160, 20, 241)); padding: 0px;
     color:white;
     margin-top: 10px;
     text-align: center;
-    font-size: 30px;
+    font-size: 25px;
+    padding: 30px;
+    height: 100px;
 }
 .text_input{
     height: 100px;
@@ -102,9 +122,11 @@ body {
 }
 .add_user_content,.delete_user_content{
 	width: 50%;
+    height: auto;
 	margin: 5% auto 5% auto;
 	background-color: white;
 	padding: 5px 30px;
+    padding-bottom: 30px;
 }
 
 .view_project{
@@ -125,6 +147,7 @@ body {
 	margin: 5% auto 5% 10%;
 	background-color: white;
 	padding: 5px 30px;
+    padding: 30px 20px;
 }
 
 .form {
@@ -178,4 +201,14 @@ img {
     color: white;
     background-color:rgb(25, 115, 233);
     padding: 5px;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.089), 0 5px 30px 0 rgba(0, 0, 0, 0.19);
+}
+
+.shape {
+    /* background-color: blueviolet; */
+	width: 0;
+	height: 0;
+	border-top: 20px solid transparent;
+	border-left: 40px solid rgb(17, 50, 238);
+	border-bottom: 20px solid transparent;
 }

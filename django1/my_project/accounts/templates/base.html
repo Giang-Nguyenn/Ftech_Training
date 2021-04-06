@@ -5,11 +5,16 @@
     {% load static %}
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{% static 'accounts/style.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>{% block title %}{% endblock %}</title>
 </head>
 
-<body>
-    {% block header %} {% endblock %} {% block content %} {% if messages %}
+<body style="background-image: linear-gradient(to right, rgba(8, 138, 245, 0.815), rgb(160, 20, 241)); padding: 0px;">
+    {% block header %}
+    {% endblock %}
+    {% block content %} 
+    {% if messages %}
     <ul class="messages">
         {% for message in messages %}
         <script>
@@ -18,7 +23,9 @@
         <li class="{{ message.tags }}">{{ message }}</li>
         {% endfor %}
     </ul>
-    {% endif %} {% endblock %} {% block footer %} {% endblock %}
+    {% endif %}
+    {% endblock %}
+    {% block footer %}{% endblock %}
 </body>
 
 </html>

@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="form">
+    <h4 style="text-align: center;">Thêm Project</h4>
     <form action="{% url 'main_app:add_project' %}" method="post">
         {% csrf_token %}
         {{ form|crispy }}

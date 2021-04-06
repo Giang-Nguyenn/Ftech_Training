@@ -12,7 +12,7 @@
             <!-- Thêm dự án -->
             <!-- Ẩn hiện nút add project cho người có quyền -->
             {% if perms.main_app.add_projects %}
-            <a href="{% url 'main_app:add_project' %}"><button type="button" class="btn btn-primary" style="float: right;padding: 3px 10px;">Add</button><br></a>
+            <a href="{% url 'main_app:add_project' %}"><button type="button" class="btn btn-primary" style="float: right;padding: 3px 10px;margin: 5px;">Add</button><br></a>
             {% endif %}
             {% for list in list_project%}
             <a href="{% url 'main_app:project' list.id %}" style="color: white;text-decoration: none;">
@@ -26,11 +26,17 @@
 
 <!-- Betwwen -->
         <div class="col-sm-10 block_between" style="margin: 3px;">
+            <div class="row" style="color: black;margin: 3px 5px !important;">
+                <!-- <div class="col-sm-6">
+                    <p style="margin: 0px;">Task mới: </p>
+                    <p style="margin: 0px;">Đang làm-Chưa làm-Hoàn thành: </p>
+                </div> -->
+            </div>
              <!-- Thanh chọn lọc -->
-            <div class="row choses" >
-                <form action="{% url 'main_app:home' %}" action="get">
+            <div class="row choses">
+                <form class="choses_form" action="{% url 'main_app:home' %}" action="get">
                     <label for="Project">Project:</label>
-                    <select id="project" name="project">
+                    <select id="project" name="project" style="width: 150px;">
                       <option value="all" {% if choice_project == 'all' %} selected {%endif%}>All</option>
                       {% for list in list_project%}
                       <option value={{list.id}} {% if choice_project == list.id %} selected {%endif%}>{{list.name}}</option>
@@ -50,17 +56,17 @@
             
             
             <!-- Thanh tittle  -->
-            <div class="row task_item" style="font-size: 15px;">
-                <div class="col-sm-8" style="background-color:rgb(21, 93, 228)">
-                    TaskName
+            <div class="row task_item" style="font-size: 18px;margin-bottom: 10px !important;">
+                <div class="col-sm-6 task_item_inner_title" style="background-color:rgb(21, 93, 228)">
+                   TaskName
                 </div>
-                <div class="col-sm-1 " style="background-color:rgb(21, 93, 228);">
+                <div class="col-sm-3 task_item_inner_title" style="background-color:rgb(21, 93, 228);">
                    Project
                 </div>
-                <div class="col-sm-2" style="background-color:rgb(21, 93, 228)">
+                <div class="col-sm-2 task_item_inner_title" style="background-color:rgb(21, 93, 228)">
                     Start-End
                 </div>
-                <div class="col-sm-1" style="background-color:rgb(21, 93, 228)">
+                <div class="col-sm-1 task_item_inner_title" style="background-color:rgb(21, 93, 228)">
                     Deadline
                 </div>
             </div>
@@ -69,16 +75,22 @@
             <a href="{% url 'main_app:update_task' list.id %}" style="text-decoration: none;">
             <div class="row task_item" 
             style="background-color: {% if list.status == -1 %} rgb(247, 34, 6) {% elif list.status == 0 %} rgb(197, 194, 5) {% else %} rgb(8, 156, 8) {% endif %};">
-                <div class="col-sm-8 ">
+                <div class="col-sm-6 task_item_inner">
+                    {% if list.is_view == False %}
+                    <i class="far fa-bell" style="font-size: 25px;"></i>
+                    <!-- <div class="shape"></div> -->
+                    <span ><b>Mới  : </b></span>
+                    {% endif %}
+
                     {{list.name}}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-3 task_item_inner">
                     {{list.project}}
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 task_item_inner">
                     {{list.start|date:"SHORT_DATE_FORMAT"}}-{{list.end|date:"SHORT_DATE_FORMAT"}}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1 task_item_inner">
                     {{ list.deadline|date:"SHORT_DATE_FORMAT"}}
                 </div>
             </div>

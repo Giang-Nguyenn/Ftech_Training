@@ -1,21 +1,26 @@
 {% extends "base.html" %}
-
 {% block title %}Login{% endblock %}
-
-{% block header %}
-    <p>Đây là Loginn</p>
-{% endblock %}
-
+{% load crispy_forms_tags %}
+{%block header%}
+{%endblock%}
 {% block content %}
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="login">
-        <input type="hidden" name="next" value="{{ next }}">
-    </form>
-    <a href="{% url 'accounts:sign' %}">Sign</a><br>
-    <a href="{% url 'social:begin' 'facebook' %}?next={% url 'accounts:home' %}">Login with Facebook</a><br>
-    <a href="{% url 'accounts:password_reset' %}">password_reset</a><br>
+<div class="">
+    <div class="form_accounts">
+        <h4 style="text-align: center;">Login</h4>
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input class="btn btn-primary" type="submit" value="Login" style="width: 100%;">
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+        <p style="text-align: center;font-size: 12px;">__________or__________</p>
+        <a href="{% url 'social:begin' 'facebook' %}?next={% url 'accounts:home' %}">
+            <button class="btn btn-primary" style=" width: 100%;">Login with Facebook</button>
+        </a><br><br>
+        <a href="{% url 'accounts:password_reset' %}">Password_reset</a>
+        <a href="{% url 'accounts:sign' %}" style="float: right;">Sign</a><br>
+    </div>
+</div>
 
 
 <!-- notify -->
@@ -26,6 +31,6 @@
   {% endfor %}
  </ul>
 {% endif %}
-
-
 {% endblock %}
+{%block footer%}
+{%endblock%}

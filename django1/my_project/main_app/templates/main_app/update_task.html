@@ -11,6 +11,8 @@
     <form action="#" method="post">
         {% csrf_token %}
         {{ task_form|crispy }}
+        <label><b>Ngày tạo :</b>{{ task.create_at}}</label><br>
+        <label><b>Cập nhật gần nhất : </b>{{ task.create_at }} <b>by</b> {{ task.update_by }}</label><br><br>
         <input type="submit"  class='btn btn-success' value="Change" name="UpdateTask">
         <input type="submit"  class='btn btn-success' value="Delete" name="DelTask" style="float: right;">
     </form>

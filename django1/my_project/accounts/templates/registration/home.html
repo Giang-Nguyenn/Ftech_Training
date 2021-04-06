@@ -3,16 +3,29 @@
 {% block title %}Trang home{% endblock %}
 
 {% block header %}
-    <p> HomeUser</p>
 {% endblock %}
 
 {% block content %}
-   <img src="{{ user.image.url}}">
-   <p>Tên người dùng : {{ user }}</p>
-   <a href="{% url 'accounts:edit' %}">edit profile</a><br>
-   <a href="{% url 'accounts:logout' %}">logout</a><br>
-   <a href="{% url 'accounts:logout_then_login' %}">logout_then_login</a><br>
-   <a href="{% url 'accounts:password_change' %}">password_change</a><br>
+<div style="background-color: white; height: 1000px;margin: 0px; padding: 30px;">
+   <div class="container-fluid header-nav">
+      <a href="{% url 'main_app:home' %}">Trang làm việc</a>
+  </div>
+   <div class="row">
+      <div class="col-sm-4">
+         <img src="{{ user.image.url}}" style="width: 300px; height: 300px;
+         box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.089), 0 5px 30px 0 rgba(0, 0, 0, 0.19);">
+      </div>
+      <div class="col-sm-8" style="padding-top: 30px;">
+         <p><b>Tên người dùng</b> : {{ user.first_name }} {{ user.last_name }}</p>
+         <p><b>Địa chỉ Email</b> : {{ user.email }}</p>
+         <p><b>Ngày vào :</b> {{ user.date_joined }}</p>
+         <a href="{% url 'accounts:edit' %}">Edit profile</a><br>
+         <a href="{% url 'accounts:logout' %}">Logout</a><br>
+         <a href="{% url 'accounts:logout_then_login' %}">Logout_then_login</a><br>
+         <a href="{% url 'accounts:password_change' %}">Password_change</a><br>
+      </div>
+   </div>
+</div>
 {% if messages %}
       <ul class="messages">
               {% for message in messages %}

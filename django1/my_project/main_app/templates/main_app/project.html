@@ -7,7 +7,7 @@
 <!-- right -->
 <div class="container-fluid" style="margin-top: 5px;height: auto;">
     <div class="row" style="height: 100%;">
-        <div class="col-sm-2 block_left" style="margin: 3px;">
+        <div class="col-sm-2 block_left">
             <p style="text-align: center;">Các project tham gia ({{list_project|length}})</p>
             <!-- Hiển thị nút Add cho người có quyền add -->
             {% if perms.main_app.add_projects %}
@@ -36,12 +36,12 @@
 
             </div>
             <div class="row choses" >
-                <form action="{% url 'main_app:project' project.id %}" action="get">
+                <form class="choses_form" action="{% url 'main_app:project' project.id %}" action="get">
                     <label for="user">User:</label>
-                    <select id="user" name="user">
+                    <select id="user" name="user" style="width: 150px;">
                       <option value="all">Tất cả</option>
                       {% for list in list_user%}
-                      <option value={{list.id}} {% if choice_user == list.id %}selected{%endif%}>{{list.username}}</option>
+                      <option value={{list.id}} {% if choice_user == list.id %}selected{%endif%}>{{list.first_name}} {{list.last_name}}</option>
                       {% endfor %}
                     </select>
                     <label for="Status">Status</label>
@@ -61,17 +61,17 @@
             {% endif %}
 
             <!-- Thanh tittle  -->
-            <div class="row task_item" style="font-size: 15px;">
-                <div class="col-sm-8" style="background-color:rgb(21, 93, 228)">
+            <div class="row task_item" style="font-size: 15px;margin-bottom: 10px !important;">
+                <div class="col-sm-6 task_item_inner_title" style="background-color:rgb(21, 93, 228)">
                     TaskName
                 </div>
-                <div class="col-sm-1 " style="background-color:rgb(21, 93, 228);">
-                   User
+                <div class="col-sm-3 task_item_inner_title" style="background-color:rgb(21, 93, 228);">
+                    User
                 </div>
-                <div class="col-sm-2" style="background-color:rgb(21, 93, 228)">
+                <div class="col-sm-2 task_item_inner_title" style="background-color:rgb(21, 93, 228)">
                     Start-End
                 </div>
-                <div class="col-sm-1" style="background-color:rgb(21, 93, 228)">
+                <div class="col-sm-1 task_item_inner_title" style="background-color:rgb(21, 93, 228)">
                     Deadline
                 </div>
             </div>
@@ -80,16 +80,16 @@
             <a href="{% url 'main_app:update_task' list.id %}" style="text-decoration: none;">
             <div class="row task_item" 
             style="background-color: {% if list.status == -1 %} rgb(247, 34, 6) {% elif list.status == 0 %} rgb(197, 194, 5) {% else %} rgb(8, 156, 8) {% endif %};">
-                <div class="col-sm-8 ">
+                <div class="col-sm-6 task_item_inner">
                     {{list.name}}
                 </div>
-                <div class="col-sm-1">
-                    {{list.user.username}}
+                <div class="col-sm-3 task_item_inner">
+                    {{list.user}}
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 task_item_inner">
                     {{list.start|date:"SHORT_DATE_FORMAT"}}-{{list.end|date:"SHORT_DATE_FORMAT"}}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1 task_item_inner">
                     {{ list.deadline|date:"SHORT_DATE_FORMAT"}}
                 </div>
             </div>
@@ -121,11 +121,12 @@
             <button type="button" class="btn btn-primary" style="float: right; padding: 3px 10px;" onclick="document.getElementById('add_user').style.display='block'">Add</button>
             <button type="button" class="btn btn-primary" style="float: right; padding: 3px 10px;" onclick="document.getElementById('delete_user').style.display='block'">Delete</button><br>
             {% endif %}
+            <br>
             {% for list in list_user %}
             <div class="user_item">
                 <span style="font-size: 20px;color: mediumspringgreen;">.</span>
                 <img src="{{ list.image.url }}" alt="avata">
-                <span>{{ list.username }}</span>
+                <span>{{list.first_name}} {{ list.last_name }}</span>
             </div>
             {% endfor %}
         </div>
@@ -141,12 +142,14 @@
         <p style="margin: 0px;" onclick="document.getElementById('add_user').style.display='none'" class="close" title="Close Modal">&times;</p><br>
         <h3 style="text-align: center;">Thêm thành viên mới</h3>
         <h4>{{ project.name}}</h4>
-        <label>Thêm</label><br>
-        {% for list in list_user_add %}
-        <input type="checkbox" id={{ list.id }} name="add_user" value="{{list.id}}">
-        <label for="{{list.username}}"> {{list.username}}</label><br>
-        {% endfor %}
-        <input type="submit" value="Add" name="ProjectAddUser">
+        <label>Thêm ({{ list_user_add|length }})</label><br>
+        <div style="overflow: auto; max-height: 250px;">
+            {% for list in list_user_add %}
+            <input type="checkbox" id={{ list.id }} name="add_user" value="{{list.id}}">
+            <label for="{{list.username}}">{{list.first_name}} {{ list.last_name }}</label><br>
+            {% endfor %}
+        </div>
+        <input class="btn btn-success" type="submit" value="Add" name="ProjectAddUser">
  
     </form>
 </div>
@@ -157,12 +160,14 @@
         <p style="margin: 0px;" onclick="document.getElementById('delete_user').style.display='none'" class="close" title="Close Modal">&times;</p><br>
         <h3 style="text-align: center;">Xoá thành viên</h3>
         <h4>{{ project.name}}</h4>
-        <label>chọn người cần xoá</label><br>
-        {% for list in list_user %}
-        <input type="checkbox" id={{ list.id }} name="delete_user" value="{{list.id}}">
-        <label for="{{list.username}}"> {{list.username}}</label><br>
-        {% endfor %}
-        <input type="submit" value="Delete" name="ProjectDelUser">
+        <label>Chọn người cần xoá ({{ list_user_add|length }})</label><br>
+        <div style="overflow: auto; max-height: 250px;">
+            {% for list in list_user %}
+            <input type="checkbox" id={{ list.id }} name="delete_user" value="{{list.id}}">
+            <label for="{{list.username}}"> {{list.first_name}} {{ list.last_name }}</label><br>
+            {% endfor %}
+        </div>
+        <input class="btn btn-warning" type="submit" value="Delete" name="ProjectDelUser">
  
     </form>
 </div>
@@ -176,11 +181,11 @@
         <h3 style="text-align: center;">{{project.name}}</h3>
         {{ update_project_form|crispy}}
         <input name="project_id" value="{{project.id}}">
-        <p>Ngày tạo :{{ project.create_at}}</p>
-        <p>Ngày cập nhật :{{ project.update_at}}</p>
+        <p><b>Ngày tạo :</b>{{ project.create_at}}</p>
+        <p><b>Ngày cập nhật :</b>{{ project.update_at}}</p>
         <!-- Hiển thị nút cho người có quyền -->
         {% if perms.main_app.change_projects %}
-        <input type="submit" value="UpdateProject" name="UpdateProject">
+        <input  class='btn btn-success' type="submit" value="UpdateProject" name="UpdateProject">
         {% endif %}
     </form>
 </div>

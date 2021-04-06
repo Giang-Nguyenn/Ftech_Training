@@ -1,25 +1,30 @@
 {% extends "base.html" %}
-
+{% load crispy_forms_tags %}
 {% block title %}Sign{% endblock %}
 
 {% block header %}
-    <p>Đây là Sign</p>
 {% endblock %}
 
 
 {% block content %}
+<div class="form_accounts" style="margin-top: 5px;width: 500px;padding: 30px 50px;">
+    <h4 style="text-align: center;margin-top: 0px;">Sign</h4>
     <form action="#" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ sign_form.as_p }}
+        {{ sign_form|crispy }}
         {% for er in sign_form.errors %}
         <p>{{ er }}</p>
         {% endfor %}
-        <input type="submit" value="Sign">
+        <input class="btn btn-primary" type="submit" value="Sign" style="width: 100%;">
         <!-- <input type="hidden" name="next" value="{{ next }}"> -->
     </form>
-    <a href="{% url 'social:begin' 'facebook' %}?next={% url 'accounts:home' %}">Login with Facebook</a><br>
-    <a href="{% url 'accounts:password_reset' %}">password_reset</a><br>
-
+    <p style="text-align: center;font-size: 12px;">__________or__________</p>
+    <a href="{% url 'social:begin' 'facebook' %}?next={% url 'accounts:home' %}">
+        <button class="btn btn-primary" style=" width: 100%;">Login with Facebook</button>
+    </a><br><br>
+    <a href="{% url 'accounts:password_reset' %}">Password_reset</a>
+    <a href="{% url 'accounts:login' %}" style="float: right;">Login</a><br>
+</div>
 
 {% if error_notify %}
     <script>

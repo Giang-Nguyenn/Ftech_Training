@@ -6,21 +6,21 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Projects(models.Model): # Dự án 
-    name=models.CharField(max_length=50) # Tên dự án
-    describe=models.TextField(blank=True,null=True) # Miêu tả dự án
+    name=models.CharField(max_length=50) 
+    describe=models.TextField(blank=True,null=True) 
     members=models.ManyToManyField(User,through='UserProject') # Quan hệ n-n với user,và lưu trữ thông tin thêm ở UserProject
     list_status = (
         (-1, "Doing"),
         (0, 'NotDo'),
         (1, 'Done'),
     )
-    status=models.IntegerField(default=0,choices=list_status) # trạng thái -1(đang thực hiện),0(chưa thực hiện),1(đã hoàn thành)
-    note=models.TextField(blank=True,null=True) # Ghi chú
-    create_at=models.DateTimeField(auto_now_add=True,editable=False) # Ngày tạo
-    update_at=models.DateTimeField(auto_now=True,editable=False) # Ngày cập nhật mới nhất
+    status=models.IntegerField(default=0,choices=list_status)
+    note=models.TextField(blank=True,null=True)
+    create_at=models.DateTimeField(auto_now_add=True,editable=False) 
+    update_at=models.DateTimeField(auto_now=True,editable=False) 
     
     class Meta:
-        ordering=['status','create_at']
+        ordering=['status', 'create_at']
 
     def __str__(self):
         return str(self.id)+'_'+self.name
@@ -29,32 +29,34 @@ class Projects(models.Model): # Dự án
 class UserProject(models.Model): # Liên kết dự án và user
     project=models.ForeignKey(Projects,on_delete=models.CASCADE)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
-    date_joined=models.DateTimeField(default=timezone.now,editable=False) # Ngày vào 
+    date_joined=models.DateTimeField(default=timezone.now,editable=False)
     
 
 class Task(models.Model): # Các công việc 
-    name=models.CharField(max_length=200) # Tên task
-    project=models.ForeignKey(Projects,on_delete=models.CASCADE) # Thuộc dự án nào
-    user=models.ForeignKey(User,on_delete=models.CASCADE,blank=True,null=True) # Do ai đảm nhiệm
-    describe=models.TextField(blank=True,null=True) # Miêu tả
+    name=models.CharField(max_length=200)
+    project=models.ForeignKey(Projects,on_delete=models.CASCADE) 
+    user=models.ForeignKey(User,on_delete=models.CASCADE,blank=True,null=True)
+    describe=models.TextField(blank=True,null=True)
     list_status = (
         (-1, "Doing"),
         (0, 'NotDo'),
         (1, 'Done'),
     )
-    status=models.IntegerField(default=0,choices=list_status) # Trạng thái -1(đang thực hiện),0(chưa thực hiện),1(đã hoàn thành)
-    start=models.DateTimeField(blank=True,null=True) # Ngày bắt đầu
-    end=models.DateTimeField(blank=True,null=True) # Ngày kết thúc
-    deadline=models.DateTimeField(blank=True,null=True) # Hạn hoàn thành
-    note=models.TextField(blank=True,null=True) # Ghi chú thêm
-    create_at=models.DateTimeField(default=timezone.now,editable=False) # Ngày tạo
-    update_at=models.DateTimeField(auto_now=True,editable=False) # Ngày cập nhật mới nhất
+    status=models.IntegerField(default=0,choices=list_status)
+    start=models.DateTimeField(blank=True,null=True)
+    end=models.DateTimeField(blank=True,null=True)
+    deadline=models.DateTimeField(blank=True,null=True)
+    note=models.TextField(blank=True,null=True)
+    create_at=models.DateTimeField(default=timezone.now,editable=False)
+    update_at=models.DateTimeField(auto_now=True,editable=False)
+    update_by=models.CharField(max_length=30,default=None,blank=True,null=True,editable=False)
+    is_view=models.BooleanField(default=False)
     
     class Meta:
-        ordering=["status",'project']
+        ordering=["status",'-create_at','project']
 
     def __str__(self):
-        return str(self.id)+'_'+self.name
+        return str(self.id)+'_'+self.namepy 
 
 
 class UserSetting(models.Model):
