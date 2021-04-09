@@ -1,0 +1,19 @@
+Serializers : cho phép dữ liệu phức tạp chuyển dịch sang dạng đơn giản
+như json,xml hoặc ngược lại.
+    + dữ liệu từ quyery set qua nó được chuyển sang dạng đơn giản ,ngược lại dữ liệu 
+đơn giản được chuyển thành dữ liệu để lưu vào model
+    + có phần giống với form
+    + get,post: lấy toàn bộ(get) và thêm(post)
+    + get,delete,put+id: lấy một đối tượng cụ thể(get),xoá đối tượng(delete),cập nhật đối tượng(put)
+        +put: Model(object cũ,data mới) -> save()
+    +data:
+        +query->json: data=Serializers(query,many=True(nếu có nhiều object))-> data.data
+        + json->model : data=Serializers(data=request.data) -> data.data['key']
+    +is_valid(raise_exception=True): thông báo lỗi cho từng trường 
+    + validation:
+        +validate_name: một trường cụ thể
+            +Nếu  <field_name>được khai báo trên bộ tuần tự với required=False thì bước xác thực này sẽ không diễn ra nếu trường không được bao gồm,nếu muốn (validators=[valifate_name])
+        + validate : các trường với nhau
+
+
+    
