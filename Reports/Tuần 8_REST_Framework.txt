@@ -6,7 +6,7 @@ Serializers : cho phép dữ liệu phức tạp(query...)<-> đơn giản (json
     + get,delete,put+id: lấy một đối tượng cụ thể(get),xoá đối tượng(delete),cập nhật đối tượng(put)
         +put: Model(object cũ,data mới) -> save()
     +data:
-        +query->json: data=Serializers(query,many=True(nếu có nhiều object))-> data.data
+        + query->json: data=Serializers(query,many=True(nếu có nhiều object))-> data.data
         + json->model : data=Serializers(data=request.data) -> data.data['key']
     +is_valid(raise_exception=True): thông báo lỗi cho từng trường 
     +validation:
@@ -44,8 +44,8 @@ PageNumberPagination
 +page_query_param: Giá trị chuỗi cho biết tên của tham số truy vấn để sử dụng cho điều khiển phân trang.
 +page_size_query_param: Nếu được đặt, đây là giá trị chuỗi cho biết tên của tham số truy vấn cho phép khách hàng đặt kích thước trang trên cơ sở mỗi yêu cầu. Mặc định là None, cho biết rằng máy khách có thể không kiểm soát kích thước trang được yêu cầu.
 +max_page_size: Nếu được đặt, đây là giá trị số cho biết kích thước trang được yêu cầu tối đa cho phép. Thuộc tính này chỉ hợp lệ nếu page_size_query_paramcũng được đặt.
-+last_page_strings: Một danh sách hoặc nhiều giá trị chuỗi cho biết các giá trị có thể được sử dụng với page_query_paramđể yêu cầu trang cuối cùng trong tập hợp. Mặc định là('last',)
-+template: Tên của mẫu để sử dụng khi hiển thị các điều khiển phân trang trong API có thể duyệt. Có thể được ghi đè để sửa đổi kiểu kết xuất hoặc đặt thành Nonetắt hoàn toàn các điều khiển phân trang HTML. Mặc định là "rest_framework/pagination/numbers.html".
++last_page_strings: Một danh sách hoặc nhiều giá trị chuỗi cho biết các giá trị có thể được sử dụng với page_query_param để yêu cầu trang cuối cùng trong tập hợp. Mặc định là('last',)
++template: Tên của mẫu để sử dụng khi hiển thị các điều khiển phân trang trong API có thể duyệt. Có thể được ghi đè để sửa đổi kiểu kết xuất hoặc đặt thành None tắt hoàn toàn các điều khiển phân trang HTML. Mặc định là "rest_framework/pagination/numbers.html".
 
 View:
 GenericViewset: có sẵn các hàm ...,cần ghi đè
@@ -97,3 +97,12 @@ Join: Select From table1 (join) table2 on ?
          END
 
     +Có thể sử dụng trong order by và group by
+
+
+
+    Swagger:
+          +https://swagger.io/
+          +https://swagger.io/tools/swagger-codegen/
+          + https://spago.ftech.ai/swagger/
+          + drf yasg
+          + https://drf-yasg.readthedocs.io/en/stable/

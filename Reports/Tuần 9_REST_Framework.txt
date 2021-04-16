@@ -1,0 +1,22 @@
+mixin:
+    + hỗ trợ đa kế thừa
+    + cung cấp thêm thuộc tính,phương thức 
+    + ưu tiên bên trái: chứa thuộc tính ,hàm cùng tên thì bên trái sẽ được sử dụng
+
+serializers:
++ get: tạo một serializers.Serializers riêng chỉ đọc
++ post: có một serializers.ModelSerializers
+
+select_related:dùng cho các mối OneToOneField,ForeignKey , chọn dữ liệu đối tượng có liên quan bổ sung khi nó thực thi truy vấn.
+prefetch_related: dùng cho m2m,foreign ngược,thực hiện một truy vấn khác sau đó kết hợp và  thực hiện  giảm các cột dư thừa
+  +select_related là một truy vấn trong khi prefetch_related là hai
+  -> truy vấn trước là nhanh hơn. Nhưng select_related sẽ không dùng được với ManyToManyField
+
+
+
+Swagger: giúp thiết kế, xây dựng tài liệu và sử dụng REST APIs
+    + https://swagger.io/
+    + https://swagger.io/tools/swagger-codegen/
+    + https://spago.ftech.ai/swagger/
+    + drf yasg
+    + https://drf-yasg.readthedocs.io/en/stable/
