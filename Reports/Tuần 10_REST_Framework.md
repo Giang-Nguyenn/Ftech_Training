@@ -17,5 +17,6 @@
    * Thực hiện một truy vấn khác sau đó kết hợp và  thực hiện  giảm các cột dư thừa
    * Thường dùng cho các mối quan hệ :m2m,n-1 (dùng được cho cả 1-1,1-n)
    *  Số truy vấn = 2
+  
  -> hiệu năng tăng dần : .all() - perfetch_related - select_related
- Kết quả so sánh: Images/performance.png
+ * Kết quả so sánh: Images/performance.png
