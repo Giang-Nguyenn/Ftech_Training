@@ -18,4 +18,4 @@
    * Thường dùng cho các mối quan hệ :m2m,n-1 (dùng được cho cả 1-1,1-n)
    *  Số truy vấn = 2
  -> hiệu năng tăng dần : .all() - perfetch_related - select_related
- Kết quả so sánh: Images/performance.png
+ * Kết quả so sánh: Images/performance.png
