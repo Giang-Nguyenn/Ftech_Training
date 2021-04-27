@@ -16,7 +16,7 @@ class StudentSerializers(serializers.ModelSerializer):
 
     class Meta:
         model=Student
-        fields=['name','phone','members','email','address','birth_day','school']
+        fields=['name','phone','email','address','birth_day','school']
 
     def validate_birth_day(self,value):
         today=datetime.now()

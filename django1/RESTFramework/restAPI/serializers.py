@@ -9,11 +9,15 @@ now = timezone.now()
 class UserSerializers(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['username']
+
+
+class UserReadOnlySerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    username = serializers.CharField(read_only=True)
 
 
 class ProjectSerializers(serializers.ModelSerializer):
-    # members=UserSerializers(many=True,allow_null=True,required=False,read_only=True)
     class Meta:
         model = Projects
         fields = ['name', 'describe', 'members',
@@ -29,25 +33,23 @@ class ProjectSerializers(serializers.ModelSerializer):
             return value
         raise serializers.ValidationError('Status không hợp lệ')
 
-class UserReadOnlySerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    username = serializers.CharField(read_only=True)
 
 class ProjectReadOnlySerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(read_only=True)
-    members = UserReadOnlySerializer(many=True, read_only=True)
+    describe = serializers.CharField(read_only=True)
+    status = serializers.IntegerField(read_only=True)
+    create_at = serializers.DateTimeField(read_only=True)
+    update_at = serializers.DateTimeField(read_only=True)
+    note = serializers.CharField(read_only=True)
 
-class ProjectAddUserSerializers(serializers.ModelSerializer):
-    username = serializers.ChoiceField(choices=User.objects.all())
 
-    class Meta:
-        model = User
-        fields = ['username']
+class ProjectUpdateUserSerializers(serializers.Serializer):
+    id = serializers.IntegerField()
 
 
 class TaskSerializers(serializers.ModelSerializer):
-    project = serializers.StringRelatedField()
-    user = UserSerializers()
+    project = ProjectSerializers()
 
     class Meta:
         model = Task
@@ -90,25 +92,25 @@ class ProjectListUserSerializers(serializers.ModelSerializer):
         fields = ['project', 'user', 'date_joined']
 
 
-
-
 class TaskSerializers1(serializers.ModelSerializer):
-    
     class Meta:
         model = Task
         fields = ['name', 'project', 'user', 'describe', 'status', 'start',
                   'end', 'deadline', 'note', 'create_at', 'update_at', 'update_by']
 
+
 class TaskSerializers2(serializers.Serializer):
-    name=serializers.CharField(read_only=True)
-    project=serializers.CharField(read_only=True)
-    user=serializers.CharField(read_only=True)
-    describe=serializers.CharField(read_only=True)
-    status=serializers.CharField(read_only=True)
-    start=serializers.CharField(read_only=True)
-    end=serializers.CharField(read_only=True)
-    deadline=serializers.CharField(read_only=True)
-    note=serializers.CharField(read_only=True)
-    create_at=serializers.CharField(read_only=True)
-    update_at=serializers.CharField(read_only=True)
-    update_by=serializers.CharField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    project = serializers.IntegerField(read_only=True, source='project_id')
+    user = serializers.IntegerField(read_only=True, source='user_id')
+    # project = ProjectReadOnlySerializer(read_only=True)
+    # user = UserReadOnlySerializer(read_only=True)
+    describe = serializers.CharField(read_only=True)
+    status = serializers.IntegerField(read_only=True)
+    start = serializers.DateTimeField(read_only=True)
+    end = serializers.DateTimeField(read_only=True)
+    deadline = serializers.DateTimeField(read_only=True)
+    note = serializers.CharField(read_only=True)
+    create_at = serializers.DateTimeField(read_only=True)
+    update_at = serializers.DateTimeField(read_only=True)
+    update_by = serializers.IntegerField(read_only=True)
