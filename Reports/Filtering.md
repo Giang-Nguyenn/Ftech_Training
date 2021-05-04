@@ -1,4 +1,4 @@
-# Feltering
+# Filtering
 * Dùng để lọc lấy một tập con 
 * Lọc trong get_queryset:
    * Thêm bộ lọc cho queryset: Modelname.objects.filter(filed='?'),các dữ liệu dùng để lọc lấy trên url
