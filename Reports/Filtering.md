@@ -59,4 +59,17 @@
 ### Tích hợp với DRF
    * thêm bộ lọc bằng filter_class
        * filter_class=?
-   *việc sử dụng filterset_fields và filterset_class kết hợp không được hỗ trợ.
+   * việc sử dụng filterset_fields và filterset_class kết hợp không được hỗ trợ.
+# Code 
+* Lọc các user là admin
+   * View
+   * ![user_admin](https://github.com/Giang-Nguyenn/Ftech_Training/blob/main/Reports/Images/filtering_user_admin.PNG)
+   * FilterSet
+   * ![filtering_set](https://github.com/Giang-Nguyenn/Ftech_Training/blob/main/Reports/Images/filtering_set_user_admin.PNG)
+   * swagger:
+   * ![filtering_set_swagger](https://github.com/Giang-Nguyenn/Ftech_Training/blob/main/Reports/Images/filtering_set_user_admin_swagger.PNG)
+* List các project có user là nào đó (lọc theo id)
+   * View
+   * ![filtering_project](https://github.com/Giang-Nguyenn/Ftech_Training/blob/main/Reports/Images/filtering_project.PNG)
+   * swagger
+   *![filtering_project_swagger](https://github.com/Giang-Nguyenn/Ftech_Training/blob/main/Reports/Images/filtering_project_swagger.PNG)
