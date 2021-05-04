@@ -9,7 +9,7 @@ now = timezone.now()
 class UserSerializers(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username']
+        fields = ['username', 'password']
 
 
 class UserReadOnlySerializer(serializers.Serializer):
@@ -45,7 +45,26 @@ class ProjectReadOnlySerializer(serializers.Serializer):
 
 
 class ProjectUpdateUserSerializers(serializers.Serializer):
-    id = serializers.IntegerField()
+    id = serializers.CharField()
+
+    def validate_id(self, value):
+        '''
+        value='1,2,3,n'
+        '''
+        list_id_user = value.split(',')
+        for i in list_id_user:
+            try:
+                int(i)
+            except:
+                raise serializers.ValidationError(
+                    'Không phải dạng int:  %s' % i)
+
+        for i in list_id_user:
+            user = User.objects.filter(pk=i)
+            if not user:
+                raise serializers.ValidationError(
+                    'Không có user có id là   %s' % (i))
+        return value
 
 
 class TaskSerializers(serializers.ModelSerializer):
