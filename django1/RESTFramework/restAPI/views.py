@@ -16,6 +16,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
+from django.db import transaction, DatabaseError
 
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
@@ -24,7 +25,7 @@ from django.contrib.auth.models import User
 from .models import Projects, Task, UserProject
 from .permissions import IsUserInProjectPermisson, UserInProjectPermisson
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import UserFilter
+from .filters import UserFilter, ProjectFilter
 
 from .serializers import (UserReadOnlySerializer,
                           UserSerializers,
@@ -66,7 +67,8 @@ class Project(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
     queryset = Projects.objects.all()  # select_related, prefetch_related
     serializer_class = ProjectSerializers
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['members__id']
+    filter_class = ProjectFilter
+    # filterset_fields = ['members__id']
     serializer_view_class = {
         "list": ProjectReadOnlySerializer,
         "retrieve": ProjectReadOnlySerializer
@@ -139,7 +141,6 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
         pro = Projects.objects.prefetch_related(
             'members').get(pk=self.kwargs['pk'])
         queryset = pro.members.all()
-
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -150,19 +151,41 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
         serializer.is_valid(raise_exception=True)
         user_id = serializer.data['id']
         list_user_id = user_id.split(',')
-        for id in list_user_id:
-            user_p = UserProject.objects.filter(project=Projects.objects.get(pk=self.kwargs['pk']),
-                                                user=User.objects.get(pk=id))
-            if not user_p:
-                UserProject.objects.create(project=Projects.objects.get(pk=self.kwargs['pk']),
-                                           user=User.objects.get(pk=id))
+        number = 0
+        try:
+            with transaction.atomic():
+                for id in list_user_id:
+                    number = number+1
+                    print(number)
+                    user_p = UserProject.objects.filter(project=Projects.objects.get(pk=self.kwargs['pk']),
+                                                        user=User.objects.get(pk=id))
+                    if not user_p:
+                        UserProject.objects.create(project=Projects.objects.get(pk=self.kwargs['pk']),
+                                                   user=User.objects.get(pk=id))
+                    if number == 3:
+                        print('lỗi')
+                        UserProject.objects.createe(project=Projects.objects.get(pk=self.kwargs['pk']),
+                                                    user=User.objects.get(pk=id))
+                        return Response('Error')
+        except:
+            return Response('Error')
+
+        # for id in list_user_id:
+        #     user_p = UserProject.objects.filter(project=Projects.objects.get(pk=self.kwargs['pk']),
+        #                                         user=User.objects.get(pk=id))
+        #     if not user_p:
+        #         UserProject.objects.create(project=Projects.objects.get(pk=self.kwargs['pk']),
+        #                                    user=User.objects.get(pk=id))
         return Response('Thành công', status=status.HTTP_201_CREATED,)
 
     def destroy(self, request, *args, **kwargs):
         """
         request.data['id']="1,2,3,4,5"
         """
-        list_user_destroy = request.data['id'].split(',')
+        serializer = ProjectUpdateUserSerializers(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user_id = serializer.data['id']
+        list_user_destroy = user_id.split(',')
         print(list_user_destroy)
         query = UserProject.objects.filter(project=Projects.objects.get(pk=self.kwargs['pk']),
                                            user__id__in=list_user_destroy)
