@@ -33,7 +33,7 @@ VD: Một hệ thống chấm công có nhiều công ty cùng dùng,mặc dù c
     * Ứng dụng
         * Phương án này chỉ dùng làm những hệ thống nhỏ, ít dữ liệu, phát sinh dữ liệu không lớn.
 
-PA2: Cùng chung database, chia sẻ schema
+PA2: Cùng chung database, khác schema
    * Database -> schema -> table -> column
    * Schema: là một namespace dùng để gom nhóm các table có chung một đặc điểm nào đó đễ dễ dàng quản lý.
       * trong schema tên table là duy nhất
