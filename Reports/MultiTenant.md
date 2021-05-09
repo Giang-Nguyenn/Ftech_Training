@@ -33,7 +33,7 @@ VD: Một hệ thống chấm công có nhiều công ty cùng dùng,mặc dù c
     * Ứng dụng
         * Phương án này chỉ dùng làm những hệ thống nhỏ, ít dữ liệu, phát sinh dữ liệu không lớn.
 
-PA2: Cùng chung database, chia sẻ schema
+PA2: Cùng chung database, khác schema
    * Database -> schema -> table -> column
    * Schema: là một namespace dùng để gom nhóm các table có chung một đặc điểm nào đó đễ dễ dàng quản lý.
       * trong schema tên table là duy nhất
@@ -61,11 +61,15 @@ PA2: Cùng chung database, chia sẻ schema
 * Dữ liệu được lưu chung trên database,scheme và phân biệt dữ liệu giữa các tenant bằng một khoá ngoại đặc trưng cho người đó
 * Xác định tenant : thường xác định bằng sub host
 * Mỗi tenant có một tên miền riêng đặc trưng,duy nhất
-vd : localhost
--> host1.localhost
--> host2.localhost
+* vd : localhost
+* -> host1.localhost
+* -> host2.localhost
+
+
 
 * host1,host2 sẽ đặc trưng cho mỗi tenant(model) ,và là khoá ngoại cho tất cả các bảng để có thể phân biệt dữ liệu của các người dùng khác nhau.
 * có một method để xác định người dùng từ các sub host
 * Mỗi khi thêm dữ liệu vào các bảng thì khoá ngoại tenant sẽ được thêm vào để có thể phân biệt được dữ liệu của những người khác nhau
 * Khi truy vấn dữ liệu sẽ thêm một bước lọc  : .filter(tenant=tenant) để lấy ra giữ liệu của tenant đó
+
+# Source Code : PA1: https://github.com/Giang-Nguyenn/Ftech_Training/tree/main/django1/MultiTenant/Shared_DB_Schema
