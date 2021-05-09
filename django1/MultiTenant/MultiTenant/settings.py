@@ -25,7 +25,7 @@ SECRET_KEY = 'cf-%z2feqaecnqdh$tkd#_uyt-^$i=vxi5l9!o_))#ghp^1$61'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['host1.localhost','host2.localhost','host3.localhost']
+ALLOWED_HOSTS = ['admin.localhost','host1.localhost','host2.localhost','host3.localhost']
 
 
 # Application definition
@@ -38,10 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Shared_DB_Schema',
-    'Shared_DB_isolatedSchema',
+    # 'Shared_DB_isolatedSchema',
     'rest_framework',
     'drf_yasg',
-    # 'rest_framework.authtoken',
+    'rest_framework.authtoken',
     'django_filters',
 ]
 
@@ -124,7 +124,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES':[
+        'rest_framework.permissions.AllowAny',
+        ],
     # 'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5
 }
+AUTH_USER_MODEL = "Shared_DB_Schema.User"
+AUTHENTICATION_BACKENDS = ['Shared_DB_Schema.authentication.ModelBackendCustom']

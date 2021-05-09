@@ -3,7 +3,7 @@ from django.db import models
 import datetime
 from django.utils import timezone
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class Tenant(models.Model):
@@ -13,10 +13,17 @@ class Tenant(models.Model):
         return str(self.name)+"_"+str(self.id)
 
 class TenantAwareModel(models.Model):
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE,blank=False)
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE,default=1)
 
     class Meta:
         abstract = True
+
+class User(AbstractUser,TenantAwareModel):
+    supper_admin=models.BooleanField(default=False)
+    
+    class Meta(AbstractUser.Meta):
+        db_table = 'auth_user'
+
 
 class Projects(TenantAwareModel):  # Dự án
     name = models.CharField(max_length=50)
