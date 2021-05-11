@@ -31,7 +31,7 @@ from .permissions import (IsUserInProjectPermisson,
                           UserInProjectPermisson,
                           IsSuperAdmin)
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import UserFilter, ProjectFilter
+from .filters import UserFilter, ProjectFilter,TaskFilter
 from .utils import tenant_from_request
 
 from .serializers import (UserReadOnlySerializer,
@@ -127,6 +127,8 @@ class Task(ModelViewSetCustom):
     # permission_classes = [IsAuthenticated]
     queryset = Task.objects.all()
     serializer_class = TaskSerializers
+    filter_backends = [DjangoFilterBackend]
+    filter_class = TaskFilter
     pagination_class = PageNumberPagination
 
 
@@ -167,7 +169,8 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
     def get_queryset(self):
         pro = Projects.objects.prefetch_related(
             'members').get(pk=self.kwargs['pk'])
-        queryset = pro.members.all()
+        ten = tenant_from_request(self.request)
+        queryset = pro.members.filter(tenant=ten)
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -179,17 +182,19 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
         user_id = serializer.data['id']
         list_user_id = user_id.split(',')
         number = 0
+        ten=tenant_from_request(request)
         try:
             with transaction.atomic():
                 for id in list_user_id:
                     number = number+1
                     print(number)
                     user_p = UserProject.objects.filter(project=Projects.objects.get(pk=self.kwargs['pk']),
-                                                        user=User.objects.get(pk=id))
+                                                        user=User.objects.get(pk=id),
+                                                        tenant=ten)
                     if not user_p:
                         UserProject.objects.create(project=Projects.objects.get(pk=self.kwargs['pk']),
                                                    user=User.objects.get(pk=id))
-                    if number == 3:
+                    if number == 3: # test atomic
                         print('lỗi')
                         UserProject.objects.createe(project=Projects.objects.get(pk=self.kwargs['pk']),
                                                     user=User.objects.get(pk=id))
@@ -206,8 +211,11 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
         user_id = serializer.data['id']
         list_user_destroy = user_id.split(',')
         print(list_user_destroy)
+        ten=tenant_from_request(request)
         query = UserProject.objects.filter(project=Projects.objects.get(pk=self.kwargs['pk']),
-                                           user__id__in=list_user_destroy)
+                                           user__id__in=list_user_destroy,
+                                           tenant=ten)
+        print(query)
         query.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

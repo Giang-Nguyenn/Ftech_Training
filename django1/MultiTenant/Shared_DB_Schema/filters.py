@@ -1,7 +1,7 @@
 from django_filters import rest_framework as filters
 # from django.contrib.auth.models import User
 
-from .models import Projects,User
+from .models import Projects,User,Task
 
 
 class UserFilter(filters.FilterSet):
@@ -23,4 +23,14 @@ class ProjectFilter(filters.FilterSet):
 
     class Meta:
         model = Projects
+        fields = []
+
+class TaskFilter(filters.FilterSet):
+    user = filters.NumberFilter(
+        field_name='user', lookup_expr='exact')
+    project = filters.NumberFilter(
+        field_name='project', lookup_expr='exact')
+
+    class Meta:
+        model =Task
         fields = []

@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from datetime import datetime
 # from django.contrib.auth.models import User
-from .models import Projects, Task, UserProject,User,Tenant
+from .models import Projects, Task, UserProject, User, Tenant
 from django.utils import timezone
 now = timezone.now()
+
 
 class TenantSerializers(serializers.ModelSerializer):
     class Meta:
@@ -14,7 +15,7 @@ class TenantSerializers(serializers.ModelSerializer):
 class UserSerializers(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password','email','tenant']
+        fields = ['username', 'password', 'email', 'tenant']
 
     def create(self, validated_data):
         user = super().create(validated_data)
@@ -22,10 +23,12 @@ class UserSerializers(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class SuperUserSerializers(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username','email', 'password','tenant','is_staff','is_superuser']
+        fields = ['username', 'email', 'password',
+                  'tenant', 'is_staff', 'is_superuser']
 
     def create(self, validated_data):
         user = super().create(validated_data)
@@ -43,9 +46,12 @@ class ProjectSerializers(serializers.ModelSerializer):
     class Meta:
         model = Projects
         fields = ['name', 'describe', 'members',
-                  'status', 'note', 'create_at', 'update_at']
+                  'status', 'note', 'create_at', 'update_at', 'tenant']
         extra_kwargs = {
             'members': {
+                "required": False
+            },
+            'tenant': {
                 "required": False
             }
         }
@@ -90,12 +96,17 @@ class ProjectUpdateUserSerializers(serializers.Serializer):
 
 
 class TaskSerializers(serializers.ModelSerializer):
-    project = ProjectSerializers()
+    # project = ProjectSerializers()
 
     class Meta:
         model = Task
         fields = ['name', 'project', 'user', 'describe', 'status', 'start',
                   'end', 'deadline', 'note', 'create_at', 'update_at', 'update_by']
+        extra_kwargs = {
+            'tenant': {
+                "required": False
+            }
+        }
 
 
 class TaskPostSerializers(serializers.ModelSerializer):
@@ -105,6 +116,11 @@ class TaskPostSerializers(serializers.ModelSerializer):
         model = Task
         fields = ['name', 'project', 'user', 'describe', 'status', 'start',
                   'end', 'deadline', 'note', 'create_at', 'update_at', 'update_by']
+        extra_kwargs = {
+            'tenant': {
+                "required": False
+            }
+        }
 
     def validate_start(self, value):
         # today=datetime.now()
@@ -132,8 +148,8 @@ class ProjectListUserSerializers(serializers.ModelSerializer):
         model = UserProject
         fields = ['project', 'user', 'date_joined']
 
+
 class TenantSerializers(serializers.ModelSerializer):
     class Meta:
         model = Tenant
         fields = "__all__"
-

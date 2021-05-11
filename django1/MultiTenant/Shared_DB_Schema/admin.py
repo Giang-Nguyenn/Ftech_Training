@@ -42,4 +42,4 @@ class UserProjectAdmin(CustomAdmin):
 @admin.register(Task)
 class TaskAdmin(CustomAdmin):
     fields = ['name', 'project', 'user', 'describe',
-              'status', 'start', 'end', 'dead_line', 'note']
+              'status', 'start', 'end', 'deadline', 'note']
