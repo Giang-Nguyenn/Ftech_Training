@@ -1,4 +1,6 @@
 import base64
+from django.db.models.query import QuerySet
+from django.db.utils import Error
 from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.views import APIView
@@ -27,12 +29,13 @@ from rest_framework.permissions import (AllowAny,
                                         )
 from django.contrib.auth.models import User
 from .models import Projects, Task, UserProject, User, Tenant
+
 from .permissions import (IsUserInProjectPermisson,
                           UserInProjectPermisson,
                           IsSuperAdmin)
+                          
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import UserFilter, ProjectFilter,TaskFilter
-from .utils import tenant_from_request
 
 from .serializers import (UserReadOnlySerializer,
                           SuperUserSerializers,
@@ -44,7 +47,12 @@ from .serializers import (UserReadOnlySerializer,
                           ProjectListUserSerializers,
                           ProjectReadOnlySerializer,
                           TenantSerializers,
+                          TenantSerializersAll,
                           )
+                          
+from .utils import tenant_from_request
+
+from safedelete.models import SafeDeleteModel
 # Create your views here.
 
 # _______class Mixin_____________
@@ -71,6 +79,7 @@ class GetPermissionMixin:
 class ModelViewSetCustom(ModelViewSet):
     def get_queryset(self):
         tenant = tenant_from_request(self.request)
+        print(tenant)
         return super().get_queryset().filter(tenant=tenant)
 
     def create(self, request, *args, **kwargs):
@@ -85,10 +94,26 @@ class ModelViewSetCustom(ModelViewSet):
 # ____________View____________-
 
 
-class Tenant(ModelViewSet):
+class TenantView(ModelViewSet):
     queryset = Tenant.objects.all()
     serializer_class = TenantSerializers
+    filter_backends = [DjangoFilterBackend]
+    # filter_class = ProjectFilter
+    # permission_classes = [IsSuperAdmin]
+
+class TenantAll(ModelViewSet):
+    queryset = Tenant.all_objects.all()
+    # queryset = Tenant.objects.all_with_deleted()
+    serializer_class = TenantSerializersAll
     permission_classes = [IsSuperAdmin]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.undelete()
+        print(instance)
+        # self.perform_update(serializer)
+
+        return Response('serializer.data')
 
 class CreateSuperUser(ModelViewSet):
     queryset=User.objects.filter(is_staff=True)
@@ -120,6 +145,7 @@ class Project(GetPermissionMixin, GetSerializerMixin, ModelViewSetCustom):
         'list': [IsAuthenticated],
         'retrieve': [IsUserInProjectPermisson],
     }
+
 
 
 
@@ -167,10 +193,11 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
         return obj
 
     def get_queryset(self):
-        pro = Projects.objects.prefetch_related(
-            'members').get(pk=self.kwargs['pk'])
         ten = tenant_from_request(self.request)
-        queryset = pro.members.filter(tenant=ten)
+        # queryset = pro.members.filter(tenant=ten)
+        pro = Projects.objects.filter(tenant=ten).prefetch_related(
+            'members').filter(pk=self.kwargs['pk']).first()
+        queryset = pro.members.all()
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -193,7 +220,8 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
                                                         tenant=ten)
                     if not user_p:
                         UserProject.objects.create(project=Projects.objects.get(pk=self.kwargs['pk']),
-                                                   user=User.objects.get(pk=id))
+                                                   user=User.objects.get(pk=id),
+                                                   tenant=ten)
                     if number == 3: # test atomic
                         print('lỗi')
                         UserProject.objects.createe(project=Projects.objects.get(pk=self.kwargs['pk']),

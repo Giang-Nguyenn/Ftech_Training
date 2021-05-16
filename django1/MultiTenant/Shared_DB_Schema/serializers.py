@@ -101,7 +101,7 @@ class TaskSerializers(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['name', 'project', 'user', 'describe', 'status', 'start',
-                  'end', 'deadline', 'note', 'create_at', 'update_at', 'update_by']
+                  'end', 'deadline', 'note', 'create_at', 'update_at', 'update_by','tenant']
         extra_kwargs = {
             'tenant': {
                 "required": False
@@ -150,6 +150,12 @@ class ProjectListUserSerializers(serializers.ModelSerializer):
 
 
 class TenantSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Tenant
+        fields = "__all__"
+
+class TenantSerializersAll(serializers.ModelSerializer):
+    deleted=serializers.DateTimeField()
     class Meta:
         model = Tenant
         fields = "__all__"

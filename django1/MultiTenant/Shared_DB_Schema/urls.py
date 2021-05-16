@@ -9,7 +9,8 @@ router = SimpleRouter()
 router.register('project', views.Project, basename='project-list')
 router.register('task', views.Task, basename='task-list')
 router.register('user', views.Users, basename='user-list')
-router.register('tenant', views.Tenant, basename='tenant-list')
+router.register('tenant', views.TenantView, basename='tenant-list')
+router.register('tenant_all', views.TenantAll, basename='tenant-list')
 router.register('superuser', views.CreateSuperUser, basename='superuser')
 
 

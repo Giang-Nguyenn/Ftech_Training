@@ -34,3 +34,13 @@ class TaskFilter(filters.FilterSet):
     class Meta:
         model =Task
         fields = []
+
+# class TaskFilter(filters.FilterSet):
+#     user = filters.NumberFilter(
+#         field_name='user', lookup_expr='exact')
+#     project = filters.NumberFilter(
+#         field_name='project', lookup_expr='exact')
+
+#     class Meta:
+#         model =Task
+#         fields = []

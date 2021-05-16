@@ -3,12 +3,21 @@ from django.db import models
 import datetime
 from django.utils import timezone
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser,UserManager
+
+from safedelete.models import SafeDeleteModel
+from safedelete import config
+
+# from django.contrib.auth.management.commands import createsuperuser
+
+
 # Create your models here.
 
-class Tenant(models.Model):
+class Tenant(SafeDeleteModel,models.Model):
+    _safedelete_policy=config.SOFT_DELETE_CASCADE
     name = models.CharField(max_length=100)
     subdomain_prefix = models.CharField(max_length=100, unique=True)
+    # note=models.CharField(max_length=100,blank=True)
     def __str__(self):
         return str(self.name)+"_"+str(self.id)
 
@@ -18,14 +27,32 @@ class TenantAwareModel(models.Model):
     class Meta:
         abstract = True
 
-class User(AbstractUser,TenantAwareModel):
+class User(TenantAwareModel,SafeDeleteModel,AbstractUser):
+    _safedelete_policy=config.SOFT_DELETE_CASCADE
+    objects = UserManager()
     supper_admin=models.BooleanField(default=False)
+
+
+    def create_superuser(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('supper_admin', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        tenant=Tenant.objects.filter(name='admin') # ?
+
+        return self._create_user(username, email, password, tenant , **extra_fields)
     
     class Meta(AbstractUser.Meta):
         db_table = 'auth_user'
 
 
-class Projects(TenantAwareModel):  # Dự án
+class Projects(SafeDeleteModel,TenantAwareModel):  # Dự án
+    _safedelete_policy=config.SOFT_DELETE_CASCADE
+
     name = models.CharField(max_length=50)
     describe = models.TextField(blank=True, null=True)
     # Quan hệ n-n với user,và lưu trữ thông tin thêm ở UserProject
@@ -47,13 +74,17 @@ class Projects(TenantAwareModel):  # Dự án
         return str(self.name)+"_"+str(self.id)
 
 
-class UserProject(TenantAwareModel):  # Liên kết dự án và user
+class UserProject(SafeDeleteModel,TenantAwareModel):  # Liên kết dự án và user
+    _safedelete_policy=config.SOFT_DELETE_CASCADE
+
     project = models.ForeignKey(Projects, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
 
 
-class Task(TenantAwareModel):  # Các công việc
+class Task(SafeDeleteModel,TenantAwareModel):  # Các công việc
+    _safedelete_policy=config.SOFT_DELETE_CASCADE
+
     name = models.CharField(max_length=200)
     project = models.ForeignKey(Projects, on_delete=models.CASCADE)
     user = models.ForeignKey(
