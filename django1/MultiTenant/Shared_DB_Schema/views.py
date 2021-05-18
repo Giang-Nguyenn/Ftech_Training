@@ -1,3 +1,4 @@
+from safedelete.admin import SafeDeleteAdmin, highlight_deleted
 import base64
 from django.db.models.query import QuerySet
 from django.db.utils import Error
@@ -35,9 +36,9 @@ from .models import Projects, Task, UserProject, User, Tenant
 from .permissions import (IsUserInProjectPermisson,
                           UserInProjectPermisson,
                           IsSuperAdmin)
-                          
+
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import UserFilter, ProjectFilter,TaskFilter
+from .filters import UserFilter, ProjectFilter, TaskFilter,SuperUserFilter
 
 from .serializers import (UserReadOnlySerializer,
                           SuperUserSerializers,
@@ -52,8 +53,9 @@ from .serializers import (UserReadOnlySerializer,
                           TenantSerializersAll,
                           UserReadOnlySerializerAll,
                           SuperUserSerializersAll,
+                          ProjectSerializerAll,
                           )
-                          
+
 from .utils import tenant_from_request
 
 from safedelete.models import SafeDeleteModel
@@ -103,17 +105,20 @@ class TenantView(ModelViewSet):
     queryset = Tenant.objects.all()
     serializer_class = TenantSerializers
     filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['name']
     # filter_class = ProjectFilter
     permission_classes = [IsSuperAdmin]
 
 
 class CreateSuperUser(ModelViewSet):
-    queryset=User.objects.filter(is_staff=True)
-    serializer_class=SuperUserSerializers
-    permission_classes=[IsSuperAdmin]
+    queryset = User.objects.filter(is_staff=True)
+    serializer_class = SuperUserSerializers
+    permission_classes = [IsSuperAdmin]
+    filter_backends = [DjangoFilterBackend]
+    filter_class=SuperUserFilter
 
     def create(self, request, *args, **kwargs):
-        request.data.update({'is_staff':True,'is_superuser':True})
+        request.data.update({'is_staff': True, 'is_superuser': True})
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -139,8 +144,6 @@ class Project(GetPermissionMixin, GetSerializerMixin, ModelViewSetCustom):
     }
 
 
-
-
 class Task(ModelViewSetCustom):
     # permission_classes = [IsAuthenticated]
     queryset = Task.objects.all()
@@ -164,7 +167,6 @@ class Users(GetPermissionMixin, GetSerializerMixin, ModelViewSetCustom):
     permission_view_class = {
         'list': [IsAuthenticated],
     }
-
 
 
 class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
@@ -201,20 +203,22 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
         user_id = serializer.data['id']
         list_user_id = user_id.split(',')
         number = 0
-        ten=tenant_from_request(request)
+        ten = tenant_from_request(request)
         try:
             with transaction.atomic():
                 for id in list_user_id:
                     number = number+1
                     print(number)
                     user_p = UserProject.objects.filter(project=Projects.objects.get(pk=self.kwargs['pk']),
-                                                        user=User.objects.get(pk=id),
+                                                        user=User.objects.get(
+                                                            pk=id),
                                                         tenant=ten)
                     if not user_p:
                         UserProject.objects.create(project=Projects.objects.get(pk=self.kwargs['pk']),
-                                                   user=User.objects.get(pk=id),
+                                                   user=User.objects.get(
+                                                       pk=id),
                                                    tenant=ten)
-                    if number == 3: # test atomic
+                    if number == 3:  # test atomic
                         print('lỗi')
                         UserProject.objects.createe(project=Projects.objects.get(pk=self.kwargs['pk']),
                                                     user=User.objects.get(pk=id))
@@ -231,7 +235,7 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
         user_id = serializer.data['id']
         list_user_destroy = user_id.split(',')
         print(list_user_destroy)
-        ten=tenant_from_request(request)
+        ten = tenant_from_request(request)
         query = UserProject.objects.filter(project=Projects.objects.get(pk=self.kwargs['pk']),
                                            user__id__in=list_user_destroy,
                                            tenant=ten)
@@ -242,6 +246,20 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
 
 # ____Safedelete____
 
+class ModelViewSetAll(ModelViewSetCustom):
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if request.data.get('deleted') == 'False':
+            instance.undelete()
+            return Response('undelete %s thành công' % instance)
+        return Response(request.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete(force_policy=config.HARD_DELETE)
+        return Response('Xoá thành công', status=status.HTTP_204_NO_CONTENT)
+
+
 class TenantAll(ModelViewSet):
     queryset = Tenant.all_objects.all()
     serializer_class = TenantSerializersAll
@@ -249,45 +267,40 @@ class TenantAll(ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        if request.data.get('deleted') =='False':
+        if request.data.get('deleted') == 'False':
             instance.undelete()
-            return Response('undelete %s thành công'%instance )
+            return Response('undelete %s thành công' % instance)
         return Response(request.data)
 
-class UserAll(ModelViewSetCustom):
+
+class UserAll(ModelViewSetAll):
     queryset = User.all_objects.all()
     serializer_class = UserReadOnlySerializerAll
     permission_classes = [IsAdminUser]
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if request.data.get('deleted') =='False':
-            instance.undelete()
-            return Response('undelete %s thành công'%instance )
-        return Response(request.data)
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete(force_policy=config.HARD_DELETE)
-        return Response('Xoá thành công',status=status.HTTP_204_NO_CONTENT)
 
 class SuperUserAll(ModelViewSet):
-    queryset=User.all_objects.filter(is_staff=True)
-    serializer_class=SuperUserSerializersAll
-    permission_classes=[IsSuperAdmin]
+    queryset = User.all_objects.filter(is_staff=True)
+    serializer_class = SuperUserSerializersAll
+    permission_classes = [IsSuperAdmin]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        if request.data.get('deleted') =='False':
+        if request.data.get('deleted') == 'False':
             instance.undelete()
-            return Response('undelete %s thành công'%instance )
+            return Response('undelete %s thành công' % instance)
         return Response(request.data)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete(force_policy=config.HARD_DELETE)
-        return Response('Xoá thành công',status=status.HTTP_204_NO_CONTENT)
+        return Response('Xoá thành công', status=status.HTTP_204_NO_CONTENT)
 
+class ProjectAll(ModelViewSetAll):
+    queryset = Projects.all_objects.all()
+    serializer_class = ProjectSerializerAll
+    permission_classes = [IsAdminUser]
 
 
 class CustomAuthToken(ObtainAuthToken):
@@ -303,7 +316,6 @@ class CustomAuthToken(ObtainAuthToken):
             'user_id': user.pk,
         })
 
-from safedelete.admin import SafeDeleteAdmin, highlight_deleted
 
 # ---------------Test---------------
 

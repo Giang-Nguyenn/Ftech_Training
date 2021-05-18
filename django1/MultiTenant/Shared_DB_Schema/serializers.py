@@ -184,3 +184,11 @@ class UserReadOnlySerializerAll(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     username = serializers.CharField(read_only=True)
     deleted=serializers.DateTimeField()
+
+class ProjectSerializerAll(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    describe = serializers.CharField(read_only=True)
+    status = serializers.IntegerField(read_only=True)
+    note = serializers.CharField(read_only=True)
+    deleted=serializers.DateTimeField()

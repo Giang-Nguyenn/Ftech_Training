@@ -15,6 +15,7 @@ router.register('superuser', views.CreateSuperUser, basename='superuser')
 router.register('tenant_all', views.TenantAll, basename='tenan-tall-list')
 router.register('user_all', views.UserAll, basename='user-all-list')
 router.register('superuser_all', views.SuperUserAll, basename='superuser-all-list')
+router.register('project_all', views.ProjectAll, basename='project-all-list')
 
 
 urlpatterns = [

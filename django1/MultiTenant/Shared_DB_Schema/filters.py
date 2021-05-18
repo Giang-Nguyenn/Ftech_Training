@@ -1,4 +1,5 @@
 from django_filters import rest_framework as filters
+from rest_framework.fields import Field
 # from django.contrib.auth.models import User
 
 from .models import Projects,User,Task
@@ -33,6 +34,12 @@ class TaskFilter(filters.FilterSet):
 
     class Meta:
         model =Task
+        fields = []
+
+class SuperUserFilter(filters.FilterSet):
+    tenant_name= filters.CharFilter(field_name='tenant__name',lookup_expr='exact')
+    class Meta:
+        model = User
         fields = []
 
 # class TaskFilter(filters.FilterSet):
