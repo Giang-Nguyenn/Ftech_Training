@@ -20,6 +20,8 @@ from rest_framework.response import Response
 
 from django.db import transaction, DatabaseError
 from django.conf import global_settings
+from safedelete import config
+
 
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import (AllowAny,
@@ -48,6 +50,8 @@ from .serializers import (UserReadOnlySerializer,
                           ProjectReadOnlySerializer,
                           TenantSerializers,
                           TenantSerializersAll,
+                          UserReadOnlySerializerAll,
+                          SuperUserSerializersAll,
                           )
                           
 from .utils import tenant_from_request
@@ -79,7 +83,7 @@ class GetPermissionMixin:
 class ModelViewSetCustom(ModelViewSet):
     def get_queryset(self):
         tenant = tenant_from_request(self.request)
-        print(tenant)
+        # print(tenant)
         return super().get_queryset().filter(tenant=tenant)
 
     def create(self, request, *args, **kwargs):
@@ -91,6 +95,7 @@ class ModelViewSetCustom(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(request.data, status=status.HTTP_201_CREATED, headers=headers)
 
+
 # ____________View____________-
 
 
@@ -99,21 +104,8 @@ class TenantView(ModelViewSet):
     serializer_class = TenantSerializers
     filter_backends = [DjangoFilterBackend]
     # filter_class = ProjectFilter
-    # permission_classes = [IsSuperAdmin]
-
-class TenantAll(ModelViewSet):
-    queryset = Tenant.all_objects.all()
-    # queryset = Tenant.objects.all_with_deleted()
-    serializer_class = TenantSerializersAll
     permission_classes = [IsSuperAdmin]
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.undelete()
-        print(instance)
-        # self.perform_update(serializer)
-
-        return Response('serializer.data')
 
 class CreateSuperUser(ModelViewSet):
     queryset=User.objects.filter(is_staff=True)
@@ -248,6 +240,56 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# ____Safedelete____
+
+class TenantAll(ModelViewSet):
+    queryset = Tenant.all_objects.all()
+    serializer_class = TenantSerializersAll
+    permission_classes = [IsSuperAdmin]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if request.data.get('deleted') =='False':
+            instance.undelete()
+            return Response('undelete %s thành công'%instance )
+        return Response(request.data)
+
+class UserAll(ModelViewSetCustom):
+    queryset = User.all_objects.all()
+    serializer_class = UserReadOnlySerializerAll
+    permission_classes = [IsAdminUser]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if request.data.get('deleted') =='False':
+            instance.undelete()
+            return Response('undelete %s thành công'%instance )
+        return Response(request.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete(force_policy=config.HARD_DELETE)
+        return Response('Xoá thành công',status=status.HTTP_204_NO_CONTENT)
+
+class SuperUserAll(ModelViewSet):
+    queryset=User.all_objects.filter(is_staff=True)
+    serializer_class=SuperUserSerializersAll
+    permission_classes=[IsSuperAdmin]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if request.data.get('deleted') =='False':
+            instance.undelete()
+            return Response('undelete %s thành công'%instance )
+        return Response(request.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete(force_policy=config.HARD_DELETE)
+        return Response('Xoá thành công',status=status.HTTP_204_NO_CONTENT)
+
+
+
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -261,6 +303,7 @@ class CustomAuthToken(ObtainAuthToken):
             'user_id': user.pk,
         })
 
+from safedelete.admin import SafeDeleteAdmin, highlight_deleted
 
 # ---------------Test---------------
 

@@ -3,6 +3,8 @@ from datetime import datetime
 # from django.contrib.auth.models import User
 from .models import Projects, Task, UserProject, User, Tenant
 from django.utils import timezone
+
+from Shared_DB_Schema import models
 now = timezone.now()
 
 
@@ -35,6 +37,12 @@ class SuperUserSerializers(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+class SuperUserSerializersAll(serializers.Serializer):
+    username=serializers.CharField(read_only=True)
+    tenant=serializers.CharField(read_only=True)
+    deleted=serializers.DateTimeField()
+
 
 
 class UserReadOnlySerializer(serializers.Serializer):
@@ -155,7 +163,24 @@ class TenantSerializers(serializers.ModelSerializer):
         fields = "__all__"
 
 class TenantSerializersAll(serializers.ModelSerializer):
+    # CHOICES = (
+    #     ('True', 'Male'),
+    #     ('F', 'Female'),
+    # )
     deleted=serializers.DateTimeField()
     class Meta:
         model = Tenant
         fields = "__all__"
+        extra_kwargs = {
+            'name': {
+                "read_only": True
+            },
+            'subdomain_prefix': {
+                "read_only": True
+            },
+        }
+
+class UserReadOnlySerializerAll(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    username = serializers.CharField(read_only=True)
+    deleted=serializers.DateTimeField()

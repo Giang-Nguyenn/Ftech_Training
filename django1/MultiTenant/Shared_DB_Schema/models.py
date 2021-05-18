@@ -8,8 +8,8 @@ from django.contrib.auth.models import AbstractUser,UserManager
 from safedelete.models import SafeDeleteModel
 from safedelete import config
 
-# from django.contrib.auth.management.commands import createsuperuser
-
+from django.contrib.auth.management.commands import createsuperuser
+from safedelete.managers import SafeDeleteManager
 
 # Create your models here.
 
@@ -26,12 +26,30 @@ class TenantAwareModel(models.Model):
 
     class Meta:
         abstract = True
+class ManagerCustom(SafeDeleteManager,UserManager):
+    pass
 
 class User(TenantAwareModel,SafeDeleteModel,AbstractUser):
+    # tenant=models.ForeignKey(Tenant, on_delete=models.CASCADE,)
     _safedelete_policy=config.SOFT_DELETE_CASCADE
-    objects = UserManager()
+    # objects = UserManager()
+    objects = ManagerCustom()
     supper_admin=models.BooleanField(default=False)
-
+    # REQUIRED_FIELDS = ['email','tenant']
+    # def _create_user(self, username, email, password,tenant, **extra_fields):
+    #     """
+    #     Create and save a user with the given username, email, and password.
+    #     """
+    #     if not username:
+    #         raise ValueError('The given username must be set')
+    #     email = self.normalize_email(email)
+    #     username = self.model.normalize_username(username)
+    #     ten=Tenant.objects.filter(pk=tenant)
+    #     print(ten)
+    #     user = self.model(username=username, email=email,tenant=ten, **extra_fields)
+    #     user.set_password(password)
+    #     user.save(using=self._db)
+    #     return user
 
     def create_superuser(self, username, email=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -42,13 +60,13 @@ class User(TenantAwareModel,SafeDeleteModel,AbstractUser):
             raise ValueError('Superuser must have is_staff=True.')
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
-        tenant=Tenant.objects.filter(name='admin') # ?
+        ten=Tenant.objects.filter(name='admin') # ?
 
-        return self._create_user(username, email, password, tenant , **extra_fields)
+        return self._create_user(username, email, password, tenant=ten , **extra_fields)
     
     class Meta(AbstractUser.Meta):
         db_table = 'auth_user'
-
+ 
 
 class Projects(SafeDeleteModel,TenantAwareModel):  # Dự án
     _safedelete_policy=config.SOFT_DELETE_CASCADE
