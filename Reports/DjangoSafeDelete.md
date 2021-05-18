@@ -43,6 +43,7 @@ khi truy vấn bình thường sẽ bỏ qua các đối tượng này
    * save() :
      * keep_deleted=True : Không phục hồi mô hình nếu nó đã được xoá mềm
 
+### Source code : https://github.com/Giang-Nguyenn/Ftech_Training/tree/main/django1/MultiTenant/Shared_DB_Schema
 objects
 deleted_objects
 all_object
