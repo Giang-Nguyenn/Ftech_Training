@@ -38,7 +38,7 @@ from .permissions import (IsUserInProjectPermisson,
                           IsSuperAdmin)
 
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import UserFilter, ProjectFilter, TaskFilter,SuperUserFilter
+from .filters import UserFilter, ProjectFilter, TaskFilter, SuperUserFilter
 
 from .serializers import (UserReadOnlySerializer,
                           SuperUserSerializers,
@@ -57,6 +57,8 @@ from .serializers import (UserReadOnlySerializer,
                           )
 
 from .utils import tenant_from_request
+
+from rest_framework.decorators import action
 
 from safedelete.models import SafeDeleteModel
 # Create your views here.
@@ -82,10 +84,56 @@ class GetPermissionMixin:
         return [permission() for permission in self.permission_classes]
 
 
-class ModelViewSetCustom(ModelViewSet):
+class GetQuerySetMixin:
+    queryset_extra_action = []
+
+    def get_queryset(self):
+        if self.action in self.queryset_extra_action:
+            return self.queryset_all_with_deleted
+        return self.queryset
+
+
+class ModelViewSetExtraActions(GetQuerySetMixin, ModelViewSet):
+    queryset_extra_action = ['all_with_deleted', 'undelete', 'hard_delete']
+
+    @action(detail=False, methods=['get'])
+    def all_with_deleted(self, request, pk=None):
+        # queryset=self.queryset_all_with_deleted
+        # queryset = self.filter_queryset(queryset)
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['patch'])
+    def undelete(self, request, pk=None):
+        # self.queryset=Tenant.all_objects.all()
+        instance = self.get_object()
+        if instance.deleted:
+            instance.undelete()
+            return Response('undelete %s thành công' % instance, status=status.HTTP_200_OK)
+        else:
+            return Response('%s chưa bị xoá ' % instance, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['delete'])
+    def hard_delete(self, request, pk=None):
+        # self.queryset=Tenant.all_objects.all()
+        instance = self.get_object()
+        if instance:
+            instance.delete(force_policy=config.HARD_DELETE)
+            return Response('%s đã được xoá' % instance, status=status.HTTP_200_OK)
+        else :
+            return Response('Không tồn tại')
+
+
+class ModelViewSetCustom(ModelViewSetExtraActions):
     def get_queryset(self):
         tenant = tenant_from_request(self.request)
-        # print(tenant)
         return super().get_queryset().filter(tenant=tenant)
 
     def create(self, request, *args, **kwargs):
@@ -97,12 +145,12 @@ class ModelViewSetCustom(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(request.data, status=status.HTTP_201_CREATED, headers=headers)
 
-
 # ____________View____________-
 
 
-class TenantView(ModelViewSet):
+class TenantView(ModelViewSetExtraActions):
     queryset = Tenant.objects.all()
+    queryset_all_with_deleted = Tenant.all_objects.all()
     serializer_class = TenantSerializers
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name']
@@ -110,12 +158,14 @@ class TenantView(ModelViewSet):
     permission_classes = [IsSuperAdmin]
 
 
-class CreateSuperUser(ModelViewSet):
+
+class CreateSuperUser(ModelViewSetExtraActions):
     queryset = User.objects.filter(is_staff=True)
+    queryset_all_with_deleted = User.all_objects.filter(is_staff=True)
     serializer_class = SuperUserSerializers
     permission_classes = [IsSuperAdmin]
     filter_backends = [DjangoFilterBackend]
-    filter_class=SuperUserFilter
+    filter_class = SuperUserFilter
 
     def create(self, request, *args, **kwargs):
         request.data.update({'is_staff': True, 'is_superuser': True})
@@ -128,6 +178,7 @@ class CreateSuperUser(ModelViewSet):
 
 class Project(GetPermissionMixin, GetSerializerMixin, ModelViewSetCustom):
     queryset = Projects.objects.all()
+    queryset_all_with_deleted = Projects.all_objects.all()
     serializer_class = ProjectSerializers
     filter_backends = [DjangoFilterBackend]
     filter_class = ProjectFilter
@@ -147,6 +198,7 @@ class Project(GetPermissionMixin, GetSerializerMixin, ModelViewSetCustom):
 class Task(ModelViewSetCustom):
     # permission_classes = [IsAuthenticated]
     queryset = Task.objects.all()
+    queryset_all_with_deleted = Task.all_objects.all()
     serializer_class = TaskSerializers
     filter_backends = [DjangoFilterBackend]
     filter_class = TaskFilter
@@ -155,6 +207,7 @@ class Task(ModelViewSetCustom):
 
 class Users(GetPermissionMixin, GetSerializerMixin, ModelViewSetCustom):
     queryset = User.objects.all()
+    queryset_all_with_deleted = User.all_objects.all()
     # authentication_classes = [BasicAuthentication]
     filter_backends = [DjangoFilterBackend]
     filter_class = UserFilter
@@ -246,61 +299,61 @@ class ProjectListUser(GetPermissionMixin, GetSerializerMixin, ModelViewSet):
 
 # ____Safedelete____
 
-class ModelViewSetAll(ModelViewSetCustom):
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if request.data.get('deleted') == 'False':
-            instance.undelete()
-            return Response('undelete %s thành công' % instance)
-        return Response(request.data)
+# class ModelViewSetAll(ModelViewSetCustom):
+#     def update(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         if request.data.get('deleted') == 'False':
+#             instance.undelete()
+#             return Response('undelete %s thành công' % instance)
+#         return Response(request.data)
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete(force_policy=config.HARD_DELETE)
-        return Response('Xoá thành công', status=status.HTTP_204_NO_CONTENT)
-
-
-class TenantAll(ModelViewSet):
-    queryset = Tenant.all_objects.all()
-    serializer_class = TenantSerializersAll
-    permission_classes = [IsSuperAdmin]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if request.data.get('deleted') == 'False':
-            instance.undelete()
-            return Response('undelete %s thành công' % instance)
-        return Response(request.data)
+#     def destroy(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         instance.delete(force_policy=config.HARD_DELETE)
+#         return Response('Xoá thành công', status=status.HTTP_204_NO_CONTENT)
 
 
-class UserAll(ModelViewSetAll):
-    queryset = User.all_objects.all()
-    serializer_class = UserReadOnlySerializerAll
-    permission_classes = [IsAdminUser]
+# class TenantAll(ModelViewSet):
+#     queryset = Tenant.all_objects.all()
+#     serializer_class = TenantSerializersAll
+#     permission_classes = [IsSuperAdmin]
+
+#     def update(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         if request.data.get('deleted') == 'False':
+#             instance.undelete()
+#             return Response('undelete %s thành công' % instance)
+#         return Response(request.data)
 
 
+# class UserAll(ModelViewSetAll):
+#     queryset = User.all_objects.all()
+#     serializer_class = UserReadOnlySerializerAll
+#     permission_classes = [IsAdminUser]
 
-class SuperUserAll(ModelViewSet):
-    queryset = User.all_objects.filter(is_staff=True)
-    serializer_class = SuperUserSerializersAll
-    permission_classes = [IsSuperAdmin]
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if request.data.get('deleted') == 'False':
-            instance.undelete()
-            return Response('undelete %s thành công' % instance)
-        return Response(request.data)
+# class SuperUserAll(ModelViewSet):
+#     queryset = User.all_objects.filter(is_staff=True)
+#     serializer_class = SuperUserSerializersAll
+#     permission_classes = [IsSuperAdmin]
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete(force_policy=config.HARD_DELETE)
-        return Response('Xoá thành công', status=status.HTTP_204_NO_CONTENT)
+#     def update(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         if request.data.get('deleted') == 'False':
+#             instance.undelete()
+#             return Response('undelete %s thành công' % instance)
+#         return Response(request.data)
 
-class ProjectAll(ModelViewSetAll):
-    queryset = Projects.all_objects.all()
-    serializer_class = ProjectSerializerAll
-    permission_classes = [IsAdminUser]
+#     def destroy(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         instance.delete(force_policy=config.HARD_DELETE)
+#         return Response('Xoá thành công', status=status.HTTP_204_NO_CONTENT)
+
+
+# class ProjectAll(ModelViewSetAll):
+#     queryset = Projects.all_objects.all()
+#     serializer_class = ProjectSerializerAll
+#     permission_classes = [IsAdminUser]
 
 
 class CustomAuthToken(ObtainAuthToken):

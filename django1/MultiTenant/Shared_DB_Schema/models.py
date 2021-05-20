@@ -13,7 +13,7 @@ from safedelete.managers import SafeDeleteManager
 
 # Create your models here.
 
-class Tenant(SafeDeleteModel,models.Model):
+class Tenant(SafeDeleteModel):
     _safedelete_policy=config.SOFT_DELETE_CASCADE
     name = models.CharField(max_length=100)
     subdomain_prefix = models.CharField(max_length=100, unique=True)
